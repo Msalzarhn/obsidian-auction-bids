@@ -89,6 +89,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Subasta Masónica · Capítulo Daga de Obsidiana" },
+      { name: "description", content: "Obsidiana Auction is a web application for a Masonic charity auction." },
+      { property: "og:description", content: "Obsidiana Auction is a web application for a Masonic charity auction." },
+      { name: "twitter:description", content: "Obsidiana Auction is a web application for a Masonic charity auction." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6020d567-a682-4a00-9baa-7c2a10dfd168/id-preview-a1dfd59d--daa7a262-cd7e-4a2b-a406-157125357986.lovable.app-1782966743546.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6020d567-a682-4a00-9baa-7c2a10dfd168/id-preview-a1dfd59d--daa7a262-cd7e-4a2b-a406-157125357986.lovable.app-1782966743546.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
