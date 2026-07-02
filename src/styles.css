@@ -114,11 +114,12 @@
 @utility ornament-border {
   position: relative;
   border: 1px solid oklch(0.78 0.14 82 / 0.3);
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid oklch(0.78 0.14 82 / 0.15);
+    pointer-events: none;
+  }
 }
-@utility ornament-border::before {
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border: 1px solid oklch(0.78 0.14 82 / 0.15);
-  pointer-events: none;
-}
+
