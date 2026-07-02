@@ -1,24 +1,297 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { AuthDialog } from "@/components/AuthDialog";
+import { Countdown } from "@/components/Countdown";
+import {
+  ItemCard,
+  BidDialog,
+  type AuctionItem,
+  type Bid,
+} from "@/components/AuctionItem";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { LogOut, Sparkles, Calendar, MapPin, Users } from "lucide-react";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
+import heroBg from "@/assets/hero-bg.jpg.asset.json";
+import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
+import demolayLogo from "@/assets/demolay.jpeg.asset.json";
+import igualdadLogo from "@/assets/logia-igualdad.png.asset.json";
+
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
+  const { user, profile } = useAuth();
+  const [items, setItems] = useState<AuctionItem[]>([]);
+  const [bids, setBids] = useState<Bid[]>([]);
+  const [authOpen, setAuthOpen] = useState(false);
+  const [bidOpen, setBidOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState<AuctionItem | null>(null);
+  const [activeMax, setActiveMax] = useState(0);
+
+  useEffect(() => {
+    supabase.from("auction_items").select("*").order("sort_order")
+      .then(({ data }) => setItems((data ?? []) as AuctionItem[]));
+    supabase.from("bids").select("*").order("created_at", { ascending: false })
+      .then(({ data }) => setBids((data ?? []) as Bid[]));
+
+    const ch = supabase
+      .channel("bids-live")
+      .on("postgres_changes",
+        { event: "INSERT", schema: "public", table: "bids" },
+        (payload) => setBids((prev) => [payload.new as Bid, ...prev]))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
+  const bidsByItem = useMemo(() => {
+    const m = new Map<string, Bid[]>();
+    for (const b of bids) {
+      if (!m.has(b.item_id)) m.set(b.item_id, []);
+      m.get(b.item_id)!.push(b);
+    }
+    return m;
+  }, [bids]);
+
+  const totalRaised = useMemo(() => {
+    let sum = 0;
+    for (const it of items) {
+      const arr = bidsByItem.get(it.id);
+      sum += arr && arr.length ? Math.max(...arr.map(b => b.amount)) : 0;
+    }
+    return sum;
+  }, [items, bidsByItem]);
+
+  function handleBid(item: AuctionItem, currentMax: number) {
+    if (!user || !profile) {
+      setAuthOpen(true);
+      toast.info("Regístrate o inicia sesión para pujar");
+      return;
+    }
+    setActiveItem(item);
+    setActiveMax(currentMax);
+    setBidOpen(true);
+  }
+
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    toast.success("Sesión cerrada");
+  }
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
+    <div className="min-h-screen">
+      {/* NAV */}
+      <header className="sticky top-0 z-40 border-b border-gold/20 bg-obsidian/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-10 w-10 rounded-full ring-1 ring-gold/40" />
+            <div className="hidden sm:block leading-tight">
+              <div className="font-display text-sm text-gradient-gold">Daga de Obsidiana</div>
+              <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Subasta Benéfica DeMolay</div>
+            </div>
+          </div>
+          <nav className="flex items-center gap-2">
+            <a href="#lotes" className="hidden sm:inline text-sm text-gold-soft hover:text-gold px-3">Lotes</a>
+            <a href="#evento" className="hidden sm:inline text-sm text-gold-soft hover:text-gold px-3">Evento</a>
+            {user && profile ? (
+              <>
+                <span className="hidden md:inline text-xs text-muted-foreground pr-2">{profile.full_name}</span>
+                <Button variant="ghost" size="sm" onClick={handleSignOut} className="text-gold-soft hover:text-gold">
+                  <LogOut className="h-4 w-4 mr-1" /> Salir
+                </Button>
+              </>
+            ) : (
+              <Button size="sm" onClick={() => setAuthOpen(true)} className="bg-primary text-primary-foreground font-display tracking-wider">
+                Registrarme
+              </Button>
+            )}
+          </nav>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section
+        className="relative overflow-hidden"
+        style={{
+          backgroundImage: `linear-gradient(rgba(15,10,8,0.85), rgba(15,10,8,0.95)), url(${heroBg.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 text-center">
+          <div className="flex justify-center gap-6 mb-8 opacity-90">
+            <img src={demolayLogo.url} alt="Orden DeMolay" className="h-16 sm:h-20 rounded-md" />
+            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-16 sm:h-20 rounded-md ring-2 ring-gold/40" />
+            <img src={igualdadLogo.url} alt="R:.L:.S:. Igualdad No. 1" className="h-16 sm:h-20" />
+          </div>
+
+          <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-obsidian/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-gold-soft">
+            <Sparkles className="h-3 w-3" /> Subasta Benéfica · Virtus et Honos
+          </div>
+
+          <h1 className="mt-6 font-display text-4xl sm:text-6xl md:text-7xl leading-tight">
+            <span className="text-parchment">Subasta Masónica a favor del</span>
+            <br />
+            <span className="text-gradient-gold">Capítulo Daga de Obsidiana</span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground">
+            Objetos y prendas masónicas de colección. Cada puja apoya la formación
+            de los jóvenes de la Orden DeMolay de Honduras.
+          </p>
+
+          <div className="mx-auto mt-10 max-w-2xl">
+            <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80 mb-4">
+              Faltan
+            </div>
+            <Countdown />
+            <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Sábado 14 de noviembre de 2026</span>
+              <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" /> Tegucigalpa, Honduras</span>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Button
+              size="lg"
+              onClick={() => document.getElementById("lotes")?.scrollIntoView({ behavior: "smooth" })}
+              className="bg-primary text-primary-foreground font-display tracking-wider px-8"
+            >
+              Ver los lotes
+            </Button>
+            {!user && (
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => setAuthOpen(true)}
+                className="border-gold/50 text-gold hover:bg-gold/10 font-display tracking-wider px-8"
+              >
+                Registrarme para pujar
+              </Button>
+            )}
+          </div>
+
+          {/* Stats */}
+          <div className="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <StatCard label="Lotes" value={items.length.toString()} />
+            <StatCard label="Pujas" value={bids.length.toString()} />
+            <StatCard label="Recaudado" value={new Intl.NumberFormat("es-HN",{style:"currency",currency:"HNL",maximumFractionDigits:0}).format(totalRaised)} />
+          </div>
+        </div>
+      </section>
+
+      {/* LOTES */}
+      <section id="lotes" className="mx-auto max-w-7xl px-4 py-16 sm:py-24">
+        <div className="text-center mb-12">
+          <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80">Objetos en Subasta</div>
+          <h2 className="mt-2 font-display text-3xl sm:text-5xl text-gradient-gold">Lotes disponibles</h2>
+          <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
+            Las pujas se actualizan en vivo. La puja más alta al cierre del evento gana el lote.
+          </p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {items.map((it) => (
+            <ItemCard
+              key={it.id}
+              item={it}
+              bids={bidsByItem.get(it.id) ?? []}
+              onBid={handleBid}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* EVENTO */}
+      <section id="evento" className="bg-royal border-y border-gold/20">
+        <div className="mx-auto max-w-5xl px-4 py-16 sm:py-24">
+          <div className="grid gap-10 sm:grid-cols-2 items-center">
+            <div>
+              <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80">Sobre el Evento</div>
+              <h2 className="mt-2 font-display text-3xl sm:text-4xl text-gradient-gold">
+                Una noche de tradición y filantropía
+              </h2>
+              <p className="mt-4 text-muted-foreground">
+                Organizada por la Centenaria y Respetable Logia Simbólica
+                <span className="text-parchment"> Igualdad No. 1</span>, esta subasta reúne
+                piezas ceremoniales cuidadosamente donadas por hermanos y coleccionistas.
+              </p>
+              <p className="mt-3 text-muted-foreground">
+                El total recaudado se destina íntegramente al Capítulo
+                <span className="text-parchment"> Daga de Obsidiana</span> de la Orden DeMolay
+                de Honduras, para apoyar la formación de los jóvenes bajo el lema
+                <span className="italic text-gold-soft"> Virtus et Honos</span>.
+              </p>
+              <ul className="mt-6 space-y-2 text-sm text-parchment">
+                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Sábado 14 de noviembre de 2026</li>
+                <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo Masónico · Tegucigalpa</li>
+                <li className="flex items-center gap-2"><Users className="h-4 w-4 text-gold" /> Abierto a hermanos y familiares invitados</li>
+              </ul>
+            </div>
+
+            <div className="ornament-border rounded-xl bg-obsidian/80 p-8 shadow-gold">
+              <h3 className="font-display text-xl text-gradient-gold">Cómo participar</h3>
+              <ol className="mt-4 space-y-4 text-sm text-parchment">
+                <Step n={1} title="Regístrate">Nombre, correo, celular y logia. Solo toma un minuto.</Step>
+                <Step n={2} title="Puja en vivo">Ofrece por uno o varios lotes. Las pujas se ven en tiempo real.</Step>
+                <Step n={3} title="Gana el lote">Al cierre, la puja más alta se lleva la pieza.</Step>
+                <Step n={4} title="Realiza el pago">Coordinas el pago directamente con el tesorero de la R:.L:.S:. Igualdad No. 1.</Step>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-gold/20 bg-obsidian">
+        <div className="mx-auto max-w-6xl px-4 py-10 text-center">
+          <div className="flex justify-center gap-6 mb-4 opacity-80">
+            <img src={demolayLogo.url} alt="" className="h-12 rounded" />
+            <img src={obsidianLogo.url} alt="" className="h-12 rounded" />
+            <img src={igualdadLogo.url} alt="" className="h-12" />
+          </div>
+          <p className="font-display text-sm text-gradient-gold">Virtus et Honos</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            © {new Date().getFullYear()} Capítulo Daga de Obsidiana · Organizado por la
+            R:.L:.S:. Igualdad No. 1 · Tegucigalpa, Honduras
+          </p>
+        </div>
+      </footer>
+
+      <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
+      <BidDialog
+        open={bidOpen}
+        onOpenChange={setBidOpen}
+        item={activeItem}
+        currentMax={activeMax}
+        profile={profile}
       />
     </div>
+  );
+}
+
+function StatCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="ornament-border rounded-lg bg-obsidian/60 p-4">
+      <div className="font-display text-xl sm:text-2xl text-gradient-gold tabular-nums">{value}</div>
+      <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
+  return (
+    <li className="flex gap-3">
+      <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gradient-to-br from-gold to-crimson flex items-center justify-center font-display text-obsidian text-sm">
+        {n}
+      </div>
+      <div>
+        <div className="font-display text-parchment">{title}</div>
+        <div className="text-muted-foreground text-sm">{children}</div>
+      </div>
+    </li>
   );
 }
