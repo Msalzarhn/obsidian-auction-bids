@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,7 +12,7 @@ import {
 } from "@/components/AuctionItem";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { LogOut, Sparkles, Calendar, MapPin, Users } from "lucide-react";
+import { LogOut, Sparkles, Calendar, MapPin, Users, Shield, Landmark } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
 import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
-  const { user, profile } = useAuth();
+  const { user, profile, isAdmin } = useAuth();
   const [items, setItems] = useState<AuctionItem[]>([]);
   const [bids, setBids] = useState<Bid[]>([]);
   const [authOpen, setAuthOpen] = useState(false);
@@ -96,6 +96,11 @@ function Landing() {
           <nav className="flex items-center gap-2">
             <a href="#lotes" className="hidden sm:inline text-sm text-gold-soft hover:text-gold px-3">Lotes</a>
             <a href="#evento" className="hidden sm:inline text-sm text-gold-soft hover:text-gold px-3">Evento</a>
+            {isAdmin && (
+              <Link to="/admin" className="hidden sm:inline-flex items-center gap-1 text-sm text-gold hover:text-parchment px-3">
+                <Shield className="h-3.5 w-3.5" /> Admin
+              </Link>
+            )}
             {user && profile ? (
               <>
                 <span className="hidden md:inline text-xs text-muted-foreground pr-2">{profile.full_name}</span>
@@ -122,10 +127,26 @@ function Landing() {
         }}
       >
         <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 text-center">
-          <div className="flex justify-center gap-6 mb-8 opacity-90">
-            <img src={demolayLogo.url} alt="Orden DeMolay" className="h-16 sm:h-20 rounded-md" />
-            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-16 sm:h-20 rounded-md ring-2 ring-gold/40" />
-            <img src={igualdadLogo.url} alt="R:.L:.S:. Igualdad No. 1" className="h-16 sm:h-20" />
+          {/* Logo principal — Capítulo Daga de Obsidiana */}
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <div className="absolute inset-0 -m-6 rounded-full bg-gold/20 blur-2xl" />
+              <img
+                src={obsidianLogo.url}
+                alt="Capítulo Daga de Obsidiana"
+                className="relative h-40 w-40 sm:h-56 sm:w-56 rounded-full ring-4 ring-gold/60 shadow-gold object-cover"
+              />
+            </div>
+          </div>
+          <div className="text-xs uppercase tracking-[0.5em] text-gold-soft/90 mb-8">
+            Capítulo Daga de Obsidiana · DeMolay
+          </div>
+
+          {/* Logos de apoyo */}
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
+            <SupportLogo src={igualdadLogo.url} label="R:.L:.S:. Igualdad No. 1" />
+            <SupportLogoPlaceholder label="Gran Logia de Honduras" />
+            <SupportLogo src={demolayLogo.url} label="Orden DeMolay" />
           </div>
 
           <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-obsidian/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-gold-soft">
