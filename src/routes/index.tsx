@@ -303,6 +303,26 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
+function SupportLogo({ src, label }: { src: string; label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <img src={src} alt={label} className="h-16 sm:h-20 w-auto object-contain" />
+      <div className="text-[10px] uppercase tracking-widest text-gold-soft/70 max-w-[10rem]">{label}</div>
+    </div>
+  );
+}
+
+function SupportLogoPlaceholder({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border border-dashed border-gold/40 bg-obsidian/40 flex items-center justify-center">
+        <Landmark className="h-8 w-8 text-gold/50" />
+      </div>
+      <div className="text-[10px] uppercase tracking-widest text-gold-soft/70 max-w-[10rem]">{label}</div>
+    </div>
+  );
+}
+
 function Step({ n, title, children }: { n: number; title: string; children: React.ReactNode }) {
   return (
     <li className="flex gap-3">
