@@ -14,6 +14,7 @@ export interface AuctionItem {
   description: string;
   starting_price: number;
   sort_order: number;
+  image_url?: string | null;
 }
 
 export interface Bid {
@@ -45,9 +46,13 @@ export function ItemCard({
   return (
     <div className="ornament-border group relative flex flex-col overflow-hidden rounded-xl bg-card shadow-deep transition-transform hover:-translate-y-1">
       <div className="relative aspect-[4/3] overflow-hidden bg-royal">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Gavel className="h-20 w-20 text-gold/40" strokeWidth={1} />
-        </div>
+        {item.image_url ? (
+          <img src={item.image_url} alt={item.title} className="absolute inset-0 h-full w-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Gavel className="h-20 w-20 text-gold/40" strokeWidth={1} />
+          </div>
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
         <div className="absolute top-3 right-3 rounded-full bg-obsidian/80 backdrop-blur px-3 py-1 text-xs text-gold-soft border border-gold/30">
           {bidCount} {bidCount === 1 ? "puja" : "pujas"}

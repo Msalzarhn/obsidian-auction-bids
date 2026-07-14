@@ -14,33 +14,37 @@ export function useAuth() {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    function loadForUser(u: User | null) {
+      if (!u) {
+        setProfile(null);
+        setIsAdmin(false);
+        return;
+      }
+      setTimeout(() => {
+        supabase.from("profiles").select("*").eq("id", u.id).maybeSingle()
+          .then(({ data }) => setProfile(data as Profile | null));
+        supabase.from("user_roles").select("role").eq("user_id", u.id).eq("role", "admin").maybeSingle()
+          .then(({ data }) => setIsAdmin(!!data));
+      }, 0);
+    }
+
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => {
       setSession(s);
       setUser(s?.user ?? null);
-      if (s?.user) {
-        // defer profile fetch to avoid deadlock
-        setTimeout(() => {
-          supabase.from("profiles").select("*").eq("id", s.user.id).maybeSingle()
-            .then(({ data }) => setProfile(data as Profile | null));
-        }, 0);
-      } else {
-        setProfile(null);
-      }
+      loadForUser(s?.user ?? null);
     });
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
       setUser(data.session?.user ?? null);
       setLoading(false);
-      if (data.session?.user) {
-        supabase.from("profiles").select("*").eq("id", data.session.user.id).maybeSingle()
-          .then(({ data: p }) => setProfile(p as Profile | null));
-      }
+      loadForUser(data.session?.user ?? null);
     });
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  return { session, user, profile, loading };
+  return { session, user, profile, isAdmin, loading };
 }
