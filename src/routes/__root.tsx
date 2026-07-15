@@ -79,7 +79,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Subasta benéfica de objetos y prendas masónicas a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras. Sábado 14 de noviembre de 2026.",
+          "Subasta benéfica de objetos y prendas masónicas a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras. Lunes 31 de agosto de 2026.",
       },
       { property: "og:title", content: "Subasta Masónica · Capítulo Daga de Obsidiana" },
       {
