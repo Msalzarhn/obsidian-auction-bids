@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const DEADLINE = new Date("2026-11-14T18:00:00-06:00").getTime();
+const DEADLINE = new Date("2026-08-31T23:59:59-06:00").getTime();
 
 function calc() {
   const diff = Math.max(0, DEADLINE - Date.now());

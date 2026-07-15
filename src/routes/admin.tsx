@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2, Copy } from "lucide-react";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -114,6 +114,7 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [duplicating, setDuplicating] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   async function save() {
@@ -140,6 +141,29 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
     toast.success("Eliminado");
     onChange();
   }
+
+  async function duplicate() {
+    setDuplicating(true);
+    const { data: maxRow } = await supabase
+      .from("auction_items")
+      .select("sort_order")
+      .order("sort_order", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    const nextOrder = (maxRow?.sort_order ?? 0) + 1;
+    const { error } = await supabase.from("auction_items").insert({
+      title: `${title} (copia)`,
+      description,
+      starting_price: Number(startingPrice),
+      sort_order: nextOrder,
+      image_url: imageUrl,
+    });
+    setDuplicating(false);
+    if (error) return toast.error(error.message);
+    toast.success("Artículo duplicado");
+    onChange();
+  }
+
 
   async function uploadFile(file: File) {
     setUploading(true);
@@ -208,10 +232,14 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
               <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
             </div>
           </div>
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 pt-2">
             <Button onClick={save} disabled={saving} className="bg-primary text-primary-foreground font-display tracking-wider">
               {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
               Guardar
+            </Button>
+            <Button variant="outline" onClick={duplicate} disabled={duplicating} className="border-gold/40 text-gold-soft hover:bg-gold/10">
+              {duplicating ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Copy className="h-4 w-4 mr-1" />}
+              Duplicar
             </Button>
             <Button variant="outline" onClick={remove} disabled={deleting} className="border-crimson/60 text-crimson hover:bg-crimson/10">
               {deleting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Trash2 className="h-4 w-4 mr-1" />}

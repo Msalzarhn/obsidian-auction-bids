@@ -170,7 +170,7 @@ function Landing() {
             </div>
             <Countdown />
             <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Sábado 14 de noviembre de 2026</span>
+              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Lunes 31 de agosto de 2026</span>
               <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" /> Tegucigalpa, Honduras</span>
             </div>
           </div>
@@ -247,7 +247,7 @@ function Landing() {
                 <span className="italic text-gold-soft"> Virtus et Honos</span>.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-parchment">
-                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Sábado 14 de noviembre de 2026</li>
+                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Lunes 31 de agosto de 2026</li>
                 <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo Masónico · Tegucigalpa</li>
                 <li className="flex items-center gap-2"><Users className="h-4 w-4 text-gold" /> Abierto a hermanos y familiares invitados</li>
               </ul>
