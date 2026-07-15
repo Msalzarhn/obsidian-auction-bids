@@ -232,10 +232,14 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
               <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
             </div>
           </div>
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-wrap gap-2 pt-2">
             <Button onClick={save} disabled={saving} className="bg-primary text-primary-foreground font-display tracking-wider">
               {saving ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}
               Guardar
+            </Button>
+            <Button variant="outline" onClick={duplicate} disabled={duplicating} className="border-gold/40 text-gold-soft hover:bg-gold/10">
+              {duplicating ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Copy className="h-4 w-4 mr-1" />}
+              Duplicar
             </Button>
             <Button variant="outline" onClick={remove} disabled={deleting} className="border-crimson/60 text-crimson hover:bg-crimson/10">
               {deleting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Trash2 className="h-4 w-4 mr-1" />}
