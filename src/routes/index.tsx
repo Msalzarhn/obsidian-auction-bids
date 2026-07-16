@@ -15,8 +15,8 @@ import { toast } from "sonner";
 import { LogOut, Sparkles, Calendar, MapPin, Clock, Users, Shield } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
-import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
-import demolayLogo from "@/assets/demolay.jpeg.asset.json";
+import obsidianLogo from "@/assets/capitulo-obsidiana.png.asset.json";
+import demolayLogo from "@/assets/demolay.png.asset.json";
 import igualdadLogo from "@/assets/logia-igualdad.png.asset.json";
 import granLogiaLogo from "@/assets/logo-granlogia.png.asset.json";
 import bannerIgualdad from "@/assets/banner-igualdad.jpg.asset.json";
