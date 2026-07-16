@@ -132,11 +132,14 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
   const [startingPrice, setStartingPrice] = useState(String(item.starting_price));
   const [sortOrder, setSortOrder] = useState(String(item.sort_order));
   const [imageUrl, setImageUrl] = useState<string | null>(item.image_url);
+  const [imageUrl2, setImageUrl2] = useState<string | null>(item.image_url_2);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
+  const [uploading1, setUploading1] = useState(false);
+  const [uploading2, setUploading2] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const fileRef1 = useRef<HTMLInputElement>(null);
+  const fileRef2 = useRef<HTMLInputElement>(null);
 
   async function save() {
     setSaving(true);
@@ -146,6 +149,7 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
       starting_price: Number(startingPrice),
       sort_order: Number(sortOrder),
       image_url: imageUrl,
+      image_url_2: imageUrl2,
     }).eq("id", item.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -178,6 +182,7 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
       starting_price: Number(startingPrice),
       sort_order: nextOrder,
       image_url: imageUrl,
+      image_url_2: imageUrl2,
     });
     setDuplicating(false);
     if (error) return toast.error(error.message);
@@ -185,11 +190,15 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
     onChange();
   }
 
-
-  async function uploadFile(file: File) {
+  async function uploadFile(
+    file: File,
+    slot: 1 | 2,
+  ) {
+    const setUploading = slot === 1 ? setUploading1 : setUploading2;
+    const setImg = slot === 1 ? setImageUrl : setImageUrl2;
     setUploading(true);
     const ext = file.name.split(".").pop() ?? "jpg";
-    const path = `${item.id}/${Date.now()}.${ext}`;
+    const path = `${item.id}/slot${slot}-${Date.now()}.${ext}`;
     const { error: upErr } = await supabase.storage.from("auction-images").upload(path, file, {
       cacheControl: "3600",
       upsert: false,
@@ -200,38 +209,30 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
       .from("auction-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
     setUploading(false);
     if (signErr || !signed) return toast.error(signErr?.message ?? "No se pudo firmar la URL");
-    setImageUrl(signed.signedUrl);
-    toast.success("Foto lista — recuerda pulsar Guardar");
+    setImg(signed.signedUrl);
+    toast.success(`Foto ${slot} lista — recuerda pulsar Guardar`);
   }
 
   return (
     <div className="ornament-border rounded-xl bg-card p-5 shadow-deep">
-      <div className="grid gap-5 sm:grid-cols-[220px_1fr]">
-        <div className="space-y-2">
-          <div className="aspect-[4/3] rounded-lg border border-gold/20 bg-obsidian/60 overflow-hidden flex items-center justify-center">
-            {imageUrl ? (
-              <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-xs text-muted-foreground">Sin foto</span>
-            )}
-          </div>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => e.target.files?.[0] && uploadFile(e.target.files[0])}
+      <div className="grid gap-5 sm:grid-cols-[440px_1fr]">
+        <div className="grid grid-cols-2 gap-3">
+          <PhotoSlot
+            label="Foto 1"
+            imageUrl={imageUrl}
+            uploading={uploading1}
+            fileRef={fileRef1}
+            onFile={(f) => uploadFile(f, 1)}
+            onClear={() => setImageUrl(null)}
           />
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full border-gold/40 text-gold-soft"
-            onClick={() => fileRef.current?.click()}
-            disabled={uploading}
-          >
-            {uploading ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Upload className="h-4 w-4 mr-1" />}
-            {imageUrl ? "Cambiar foto" : "Subir foto"}
-          </Button>
+          <PhotoSlot
+            label="Foto 2"
+            imageUrl={imageUrl2}
+            uploading={uploading2}
+            fileRef={fileRef2}
+            onFile={(f) => uploadFile(f, 2)}
+            onClear={() => setImageUrl2(null)}
+          />
         </div>
 
         <div className="space-y-3">
@@ -241,7 +242,7 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
           </div>
           <div>
             <Label>Descripción</Label>
-            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
+            <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
@@ -268,6 +269,65 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
             </Button>
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function PhotoSlot({
+  label,
+  imageUrl,
+  uploading,
+  fileRef,
+  onFile,
+  onClear,
+}: {
+  label: string;
+  imageUrl: string | null;
+  uploading: boolean;
+  fileRef: React.RefObject<HTMLInputElement>;
+  onFile: (f: File) => void;
+  onClear: () => void;
+}) {
+  return (
+    <div className="space-y-2">
+      <div className="text-[10px] uppercase tracking-widest text-gold-soft/70">{label}</div>
+      <div className="aspect-square rounded-lg border border-gold/20 bg-obsidian/60 overflow-hidden flex items-center justify-center">
+        {imageUrl ? (
+          <img src={imageUrl} alt={label} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-xs text-muted-foreground">Sin foto</span>
+        )}
+      </div>
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
+      />
+      <div className="flex gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex-1 border-gold/40 text-gold-soft"
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+        >
+          {uploading ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1" />}
+          {imageUrl ? "Cambiar" : "Subir"}
+        </Button>
+        {imageUrl && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-crimson/50 text-crimson hover:bg-crimson/10 px-2"
+            onClick={onClear}
+            title="Quitar foto"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        )}
       </div>
     </div>
   );
