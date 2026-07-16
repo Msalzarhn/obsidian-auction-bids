@@ -75,24 +75,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Subasta Masónica · Capítulo Daga de Obsidiana" },
-      {
-        name: "description",
-        content:
-          "Subasta benéfica de objetos y prendas masónicas a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras. Lunes 31 de agosto de 2026.",
-      },
-      { property: "og:title", content: "Subasta Masónica · Capítulo Daga de Obsidiana" },
-      {
-        property: "og:description",
-        content:
-          "Pujas en tiempo real por objetos masónicos de colección. Fondos a favor de la Orden DeMolay de Honduras.",
-      },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Subasta Daga de Obsidiana" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Subasta Masónica · Capítulo Daga de Obsidiana" },
-      { name: "description", content: "Obsidiana Auction is a web application for a Masonic charity auction." },
-      { property: "og:description", content: "Obsidiana Auction is a web application for a Masonic charity auction." },
-      { name: "twitter:description", content: "Obsidiana Auction is a web application for a Masonic charity auction." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6020d567-a682-4a00-9baa-7c2a10dfd168/id-preview-a1dfd59d--daa7a262-cd7e-4a2b-a406-157125357986.lovable.app-1782966743546.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/6020d567-a682-4a00-9baa-7c2a10dfd168/id-preview-a1dfd59d--daa7a262-cd7e-4a2b-a406-157125357986.lovable.app-1782966743546.png" },
     ],
