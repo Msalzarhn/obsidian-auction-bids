@@ -9,8 +9,28 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2, Copy } from "lucide-react";
 
+const ADMIN_URL = "https://obsidian-auction-bids.lovable.app/admin";
+
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
+  head: () => ({
+    meta: [
+      { title: "Panel de Control · Subasta Daga de Obsidiana" },
+      {
+        name: "description",
+        content:
+          "Panel de administración interno para gestionar los objetos de la subasta benéfica del Capítulo Daga de Obsidiana.",
+      },
+      { name: "robots", content: "noindex, nofollow" },
+      { property: "og:title", content: "Panel de Control · Subasta Daga de Obsidiana" },
+      {
+        property: "og:description",
+        content: "Herramienta interna para administrar los lotes de la subasta.",
+      },
+      { property: "og:url", content: ADMIN_URL },
+    ],
+    links: [{ rel: "canonical", href: ADMIN_URL }],
+  }),
 });
 
 interface Item {

@@ -19,8 +19,65 @@ import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
 import demolayLogo from "@/assets/demolay.jpeg.asset.json";
 import igualdadLogo from "@/assets/logia-igualdad.png.asset.json";
 
+const CANONICAL_URL = "https://obsidian-auction-bids.lovable.app/";
+
 export const Route = createFileRoute("/")({
   component: Landing,
+  head: () => ({
+    meta: [
+      { title: "Subasta Masónica · Capítulo Daga de Obsidiana" },
+      {
+        name: "description",
+        content:
+          "Subasta benéfica en vivo de objetos masónicos de colección a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras. 31 de agosto de 2026.",
+      },
+      { property: "og:title", content: "Subasta Masónica · Capítulo Daga de Obsidiana" },
+      {
+        property: "og:description",
+        content:
+          "Pujas en tiempo real por objetos y prendas masónicas. Fondos a favor de la Orden DeMolay de Honduras.",
+      },
+      { property: "og:url", content: CANONICAL_URL },
+      { name: "twitter:title", content: "Subasta Masónica · Capítulo Daga de Obsidiana" },
+      {
+        name: "twitter:description",
+        content:
+          "Pujas en tiempo real por objetos y prendas masónicas. Fondos a favor de la Orden DeMolay de Honduras.",
+      },
+    ],
+    links: [{ rel: "canonical", href: CANONICAL_URL }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: "Subasta Masónica · Capítulo Daga de Obsidiana",
+          description:
+            "Subasta benéfica de objetos y prendas masónicas a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras.",
+          startDate: "2026-08-31T18:00:00-06:00",
+          endDate: "2026-08-31T23:59:59-06:00",
+          eventStatus: "https://schema.org/EventScheduled",
+          eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
+          location: {
+            "@type": "Place",
+            name: "Templo Masónico",
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: "Tegucigalpa",
+              addressCountry: "HN",
+            },
+          },
+          organizer: {
+            "@type": "Organization",
+            name: "Capítulo Daga de Obsidiana · Orden DeMolay de Honduras",
+            url: CANONICAL_URL,
+          },
+          url: CANONICAL_URL,
+        }),
+      },
+    ],
+  }),
 });
 
 function Landing() {
@@ -117,6 +174,7 @@ function Landing() {
         </div>
       </header>
 
+      <main>
       {/* HERO */}
       <section
         className="relative overflow-hidden"
@@ -134,6 +192,9 @@ function Landing() {
               <img
                 src={obsidianLogo.url}
                 alt="Capítulo Daga de Obsidiana"
+                width={224}
+                height={224}
+                fetchPriority="high"
                 className="relative h-40 w-40 sm:h-56 sm:w-56 rounded-full ring-4 ring-gold/60 shadow-gold object-cover"
               />
             </div>
@@ -265,6 +326,7 @@ function Landing() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* FOOTER */}
       <footer className="border-t border-gold/20 bg-obsidian">

@@ -1,2 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /.lovable/
+
+Sitemap: https://obsidian-auction-bids.lovable.app/sitemap.xml
