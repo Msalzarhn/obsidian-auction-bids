@@ -1,0 +1,86 @@
+{
+  "version": 1,
+  "sdk_version": "0.22.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xxhxjbrweccdyohsdtoj.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "obsidiana-auction-mcp",
+      "version": "0.1.0",
+      "title": "Subasta Daga de Obsidiana"
+    },
+    "tools": [
+      {
+        "name": "list_auction_items",
+        "title": "List auction items",
+        "description": "List every auction item (title, description, starting price, image) together with the current highest bid so far.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_bids",
+        "title": "List my bids",
+        "description": "Return the bids the signed-in user has placed, most recent first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "place_bid",
+        "title": "Place a bid",
+        "description": "Place a bid on an auction item as the signed-in user. Amount must be strictly greater than the current highest bid (or the starting price if there are no bids).",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "idempotentHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "item_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "UUID of the auction item to bid on."
+            },
+            "amount": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Bid amount in HNL (Lempiras). Must beat the current highest bid."
+            }
+          },
+          "required": [
+            "item_id",
+            "amount"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
