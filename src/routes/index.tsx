@@ -331,18 +331,37 @@ function Landing() {
       </section>
       </main>
 
+      {/* BANNER PROMOCIONAL — Próximamente sitio web Igualdad No. 1 */}
+      <section aria-label="Próximamente sitio web R:.L:.S:.M:. Igualdad No. 1" className="bg-obsidian">
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <a
+            href="#"
+            className="block overflow-hidden rounded-xl ring-1 ring-gold/30 shadow-gold transition hover:ring-gold/60"
+            aria-label="Próximamente nuestro sitio web · R:.L:.S:.M:. Igualdad No. 1"
+          >
+            <img
+              src={bannerIgualdad.url}
+              alt="Próximamente nuestro sitio web · R:.L:.S:.M:. Igualdad No. 1"
+              className="w-full h-auto block"
+              loading="lazy"
+            />
+          </a>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="border-t border-gold/20 bg-obsidian">
         <div className="mx-auto max-w-6xl px-4 py-10 text-center">
-          <div className="flex justify-center gap-6 mb-4 opacity-80">
-            <img src={demolayLogo.url} alt="" className="h-12 rounded" />
-            <img src={obsidianLogo.url} alt="" className="h-12 rounded" />
-            <img src={igualdadLogo.url} alt="" className="h-12" />
+          <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10 mb-6">
+            <FooterLogo src={granLogiaLogo.url} label="Gran Logia de Honduras" />
+            <FooterLogo src={igualdadLogo.url} label="R:.L:.S:.M:. Igualdad No. 1" />
+            <FooterLogo src={demolayLogo.url} label="Orden DeMolay" />
+            <FooterLogo src={obsidianLogo.url} label="Capítulo Daga de Obsidiana" />
           </div>
           <p className="font-display text-sm text-gradient-gold">Virtus et Honos</p>
           <p className="mt-2 text-xs text-muted-foreground">
             © {new Date().getFullYear()} Capítulo Daga de Obsidiana · Organizado por la
-            R:.L:.S:. Igualdad No. 1 · Tegucigalpa, Honduras
+            R:.L:.S:.M:. Igualdad No. 1 · Tegucigalpa, Honduras
           </p>
         </div>
       </footer>
