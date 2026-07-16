@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { LogOut, Sparkles, Calendar, MapPin, Clock, Users, Shield } from "lucide-react";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
 import obsidianLogo from "@/assets/capitulo-obsidiana.png.asset.json";
@@ -188,7 +189,7 @@ function Landing() {
       >
         <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 text-center">
           {/* Logo principal — Capítulo Daga de Obsidiana */}
-          <div className="flex justify-center mb-4">
+          <Reveal immediate as="div" className="flex justify-center mb-4">
             <div className="relative">
               <div className="absolute inset-0 -m-6 rounded-full bg-gold/20 blur-2xl" />
               <img
@@ -200,34 +201,38 @@ function Landing() {
                 className="relative h-48 w-48 sm:h-64 sm:w-64 object-contain drop-shadow-[0_0_25px_rgba(212,175,55,0.35)]"
               />
             </div>
-          </div>
-          <div className="text-xs uppercase tracking-[0.5em] text-gold-soft/90 mb-8">
+          </Reveal>
+          <Reveal immediate delay={0.1} as="div" className="text-xs uppercase tracking-[0.5em] text-gold-soft/90 mb-8">
             Capítulo Daga de Obsidiana · DeMolay
-          </div>
+          </Reveal>
 
           {/* Logos de apoyo */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
+          <Reveal immediate delay={0.15} as="div" className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
             <SupportLogo src={granLogiaLogo.url} label="Gran Logia de Honduras" />
             <SupportLogo src={igualdadLogo.url} label="R:.L:.S:.M:. Igualdad No. 1" />
             <SupportLogo src={demolayLogo.url} label="Orden DeMolay" />
-          </div>
+          </Reveal>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-obsidian/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-gold-soft">
+          <Reveal immediate delay={0.2} as="div" className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-obsidian/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-gold-soft">
             <Sparkles className="h-3 w-3" /> Subasta Benéfica · Virtus et Honos
-          </div>
+          </Reveal>
 
-          <h1 className="mt-6 font-display text-4xl sm:text-6xl md:text-7xl leading-tight">
-            <span className="text-parchment">Subasta Masónica a favor del</span>
-            <br />
-            <span className="text-gradient-gold">Capítulo Daga de Obsidiana</span>
-          </h1>
+          <Reveal immediate delay={0.25} as="div">
+            <h1 className="mt-6 font-display text-4xl sm:text-6xl md:text-7xl leading-tight">
+              <span className="text-parchment">Subasta Masónica a favor del</span>
+              <br />
+              <span className="text-gradient-gold">Capítulo Daga de Obsidiana</span>
+            </h1>
+          </Reveal>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground">
-            Objetos y prendas masónicas de colección. Cada puja apoya la formación
-            de los jóvenes de la Orden DeMolay de Honduras.
-          </p>
+          <Reveal immediate delay={0.35} as="div">
+            <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground">
+              Objetos y prendas masónicas de colección. Cada puja apoya la formación
+              de los jóvenes de la Orden DeMolay de Honduras.
+            </p>
+          </Reveal>
 
-          <div className="mx-auto mt-10 max-w-2xl">
+          <Reveal immediate delay={0.45} as="div" className="mx-auto mt-10 max-w-2xl">
             <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80 mb-4">
               Faltan
             </div>
@@ -236,9 +241,9 @@ function Landing() {
               <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Cierre: 31 de agosto de 2026</span>
               <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" /> Tegucigalpa, Honduras</span>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <Reveal immediate delay={0.55} as="div" className="mt-10 flex flex-wrap justify-center gap-3">
             <Button
               size="lg"
               onClick={() => document.getElementById("lotes")?.scrollIntoView({ behavior: "smooth" })}
@@ -256,44 +261,46 @@ function Landing() {
                 Registrarme para pujar
               </Button>
             )}
-          </div>
+          </Reveal>
+
 
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <StatCard label="Lotes" value={items.length.toString()} />
-            <StatCard label="Pujas" value={bids.length.toString()} />
-            <StatCard label="Recaudado" value={new Intl.NumberFormat("es-HN",{style:"currency",currency:"HNL",maximumFractionDigits:0}).format(totalRaised)} />
-          </div>
+          <RevealGroup stagger={0.1} className="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <RevealItem><StatCard label="Lotes" value={items.length.toString()} /></RevealItem>
+            <RevealItem><StatCard label="Pujas" value={bids.length.toString()} /></RevealItem>
+            <RevealItem><StatCard label="Recaudado" value={new Intl.NumberFormat("es-HN",{style:"currency",currency:"HNL",maximumFractionDigits:0}).format(totalRaised)} /></RevealItem>
+          </RevealGroup>
         </div>
       </section>
 
       {/* LOTES */}
       <section id="lotes" className="mx-auto max-w-7xl px-4 py-16 sm:py-24">
-        <div className="text-center mb-12">
+        <Reveal as="div" className="text-center mb-12">
           <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80">Objetos en Subasta</div>
           <h2 className="mt-2 font-display text-3xl sm:text-5xl text-gradient-gold">Lotes disponibles</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
             Las pujas se actualizan en vivo. La puja más alta al cierre del evento gana el lote.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
+        <RevealGroup stagger={0.1} className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
           {items.map((it) => (
-            <ItemCard
-              key={it.id}
-              item={it}
-              bids={bidsByItem.get(it.id) ?? []}
-              onBid={handleBid}
-            />
+            <RevealItem key={it.id}>
+              <ItemCard
+                item={it}
+                bids={bidsByItem.get(it.id) ?? []}
+                onBid={handleBid}
+              />
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       {/* EVENTO */}
       <section id="evento" className="bg-royal border-y border-gold/20">
         <div className="mx-auto max-w-5xl px-4 py-16 sm:py-24">
           <div className="grid gap-10 sm:grid-cols-2 items-center">
-            <div>
+            <Reveal as="div">
               <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80">Sobre el Evento</div>
               <h2 className="mt-2 font-display text-3xl sm:text-4xl text-gradient-gold">
                 Una noche de tradición y filantropía
@@ -315,17 +322,17 @@ function Landing() {
                 <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo de la R:.L:.S:.M:. Igualdad No. 1</li>
                 <li className="flex items-center gap-2"><Users className="h-4 w-4 text-gold" /> Abierto a hermanos y familiares invitados</li>
               </ul>
-            </div>
+            </Reveal>
 
-            <div className="ornament-border rounded-xl bg-obsidian/80 p-8 shadow-gold">
+            <Reveal as="div" delay={0.15} className="ornament-border rounded-xl bg-obsidian/80 p-8 shadow-gold">
               <h3 className="font-display text-xl text-gradient-gold">Cómo participar</h3>
-              <ol className="mt-4 space-y-4 text-sm text-parchment">
-                <Step n={1} title="Regístrate">Nombre, correo, celular y logia. Solo toma un minuto.</Step>
-                <Step n={2} title="Puja en vivo">Ofrece por uno o varios lotes. Las pujas se ven en tiempo real.</Step>
-                <Step n={3} title="Gana el lote">Al cierre, la puja más alta se lleva la pieza.</Step>
-                <Step n={4} title="Realiza el pago">Coordinas el pago directamente con el tesorero de la R:.L:.S:. Igualdad No. 1.</Step>
-              </ol>
-            </div>
+              <RevealGroup as="ol" stagger={0.1} className="mt-4 space-y-4 text-sm text-parchment">
+                <RevealItem><Step n={1} title="Regístrate">Nombre, correo, celular y logia. Solo toma un minuto.</Step></RevealItem>
+                <RevealItem><Step n={2} title="Puja en vivo">Ofrece por uno o varios lotes. Las pujas se ven en tiempo real.</Step></RevealItem>
+                <RevealItem><Step n={3} title="Gana el lote">Al cierre, la puja más alta se lleva la pieza.</Step></RevealItem>
+                <RevealItem><Step n={4} title="Realiza el pago">Coordinas el pago directamente con el tesorero de la R:.L:.S:. Igualdad No. 1.</Step></RevealItem>
+              </RevealGroup>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -333,7 +340,7 @@ function Landing() {
 
       {/* BANNER PROMOCIONAL — Próximamente sitio web Igualdad No. 1 */}
       <section aria-label="Próximamente sitio web R:.L:.S:.M:. Igualdad No. 1" className="bg-obsidian">
-        <div className="mx-auto max-w-6xl px-4 py-10">
+        <Reveal as="div" className="mx-auto max-w-6xl px-4 py-10">
           <a
             href="#"
             className="block overflow-hidden rounded-xl ring-1 ring-gold/30 shadow-gold transition hover:ring-gold/60"
@@ -346,8 +353,9 @@ function Landing() {
               loading="lazy"
             />
           </a>
-        </div>
+        </Reveal>
       </section>
+
 
       {/* FOOTER */}
       <footer className="border-t border-gold/20 bg-obsidian">
