@@ -207,8 +207,8 @@ function Landing() {
 
           {/* Logos de apoyo */}
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
-            <SupportLogo src={igualdadLogo.url} label="R:.L:.S:. Igualdad No. 1" />
-            <SupportLogoPlaceholder label="Gran Logia de Honduras" />
+            <SupportLogo src={granLogiaLogo.url} label="Gran Logia de Honduras" />
+            <SupportLogo src={igualdadLogo.url} label="R:.L:.S:.M:. Igualdad No. 1" />
             <SupportLogo src={demolayLogo.url} label="Orden DeMolay" />
           </div>
 
