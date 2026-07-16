@@ -1,33 +1,34 @@
-
 ## Objetivo
-Añadir animaciones suaves y modernas estilo iOS/Apple al hacer scroll en el landing (`src/routes/index.tsx`): los elementos entran con fade + subtle translate/scale al aparecer en viewport, con easing tipo Apple (spring suave) y salen con reverso al salir.
+Añadir música de fondo con "La Flauta Mágica" de Mozart (Obertura, dominio público) y un botón de mute/unmute visible e intuitivo.
 
-## Enfoque
-Usar **Framer Motion** (`motion/react`) — ya es idiomático para React 19 y ofrece:
-- `whileInView` con `viewport={{ once: false, amount: 0.2 }}` para reaccionar en ambos sentidos (bajar/subir).
-- Easing tipo Apple: `[0.22, 1, 0.36, 1]` (ease-out expo) o spring `{ stiffness: 120, damping: 20 }`.
-- `staggerChildren` para revelar grids de lotes en cascada.
+## Fuente del audio
+Usar una grabación en dominio público de Musopen / Archive.org de la Obertura de Die Zauberflöte (MP3). Se subirá al CDN vía `lovable-assets` para servirla desde el propio dominio (evita CORS y enlaces rotos).
 
-## Cambios
+- Descargar MP3 a `/tmp`, subir con `lovable-assets create --filename magic-flute-overture.mp3`.
+- Guardar el puntero en `src/assets/magic-flute-overture.mp3.asset.json`.
 
-1. **Instalar** `motion` (paquete oficial actual de Framer Motion).
+## Nuevo componente `src/components/BackgroundMusic.tsx`
+- `<audio loop preload="auto">` con `src` desde el asset.
+- Botón flotante fijo (posición `fixed bottom-6 right-6 z-50`), circular, con estilo dorado acorde al tema (borde `border-gold`, `bg-obsidian/80 backdrop-blur`, `shadow-gold`), tamaño ~48px.
+- Iconos `Volume2` / `VolumeX` de `lucide-react`.
+- Comportamiento:
+  - Estado inicial: **muted** (los navegadores bloquean autoplay con sonido). El `<audio>` arranca en `autoPlay muted`.
+  - Al hacer click: alterna `muted`; si es el primer unmute y el audio no está reproduciendo, llama `play()`.
+  - Guardar preferencia en `localStorage` (`bg-music-muted`) para recordar entre visitas; leer dentro de `useEffect` para evitar hydration mismatch.
+  - Volumen suave por defecto (`0.35`).
+  - Respeta `prefers-reduced-motion` sólo para animación del botón (no del audio).
+  - Tooltip / `aria-label`: "Silenciar música" / "Activar música".
+- Animación sutil: pulso dorado ligero cuando está sonando (opacidad del ring), estático cuando muted.
 
-2. **Crear `src/components/Reveal.tsx`**
-   - Wrapper reutilizable `<Reveal>` y `<RevealGroup>` (stagger).
-   - Variantes: `hidden` (opacity 0, y: 24, scale: 0.98) → `visible` (opacity 1, y: 0, scale: 1).
-   - Duración ~0.7s, easing `[0.22, 1, 0.36, 1]`.
-   - Respeta `prefers-reduced-motion` (desactiva transform, deja opacity mínima).
+## Integración
+- Montar `<BackgroundMusic />` una sola vez en `src/routes/__root.tsx` dentro de `RootComponent`, junto al `<Toaster />`, para que persista entre rutas.
 
-3. **Editar `src/routes/index.tsx`**
-   - Envolver bloques del HERO (logo, badge, título, párrafo, countdown, CTAs, stats) en `<Reveal>` con delays escalonados.
-   - Envolver header de sección "Lotes" y cada `<ItemCard>` dentro de un `RevealGroup` (stagger 0.08s).
-   - Envolver columnas de sección "Evento" (texto y tarjeta "Cómo participar") y los `<Step>`.
-   - Envolver banner Igualdad y footer.
-   - Mantener el sticky nav sin animación.
+## Ubicación estratégica
+Esquina inferior derecha (patrón universal para controles multimedia; el ojo lo encuentra sin invadir el contenido). Siempre visible por encima del contenido, sin tapar el sticky nav superior.
 
-4. **Sin cambios** en lógica de auth, pujas, datos o estilos globales.
+## Archivos
+- crear `src/assets/magic-flute-overture.mp3.asset.json`
+- crear `src/components/BackgroundMusic.tsx`
+- editar `src/routes/__root.tsx` (montar el componente)
 
-## Detalles técnicos
-- `viewport={{ once: false, amount: 0.15, margin: "0px 0px -10% 0px" }}` para que reaparezcan al volver a scrollear.
-- Para el hero (visible al cargar), usar `initial="hidden" animate="visible"` en vez de `whileInView` para evitar flicker.
-- Sin librerías extra (no GSAP, no Lenis) — se mantiene ligero.
+Sin cambios en lógica de auth, pujas o datos.
