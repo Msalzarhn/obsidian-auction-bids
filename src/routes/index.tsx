@@ -174,6 +174,7 @@ function Landing() {
         </div>
       </header>
 
+      <main>
       {/* HERO */}
       <section
         className="relative overflow-hidden"
@@ -325,6 +326,7 @@ function Landing() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* FOOTER */}
       <footer className="border-t border-gold/20 bg-obsidian">
