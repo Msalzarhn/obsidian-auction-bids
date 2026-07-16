@@ -310,8 +310,9 @@ function Landing() {
                 <span className="italic text-gold-soft"> Virtus et Honos</span>.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-parchment">
-                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Lunes 31 de agosto de 2026</li>
-                <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo Masónico · Tegucigalpa</li>
+                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Jueves 3 de septiembre de 2026</li>
+                <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-gold" /> 6:00 p.m.</li>
+                <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo de la R:.L:.S:.M:. Igualdad No. 1</li>
                 <li className="flex items-center gap-2"><Users className="h-4 w-4 text-gold" /> Abierto a hermanos y familiares invitados</li>
               </ul>
             </div>
