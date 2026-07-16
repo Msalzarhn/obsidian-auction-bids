@@ -12,12 +12,14 @@ import {
 } from "@/components/AuctionItem";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { LogOut, Sparkles, Calendar, MapPin, Users, Shield, Landmark } from "lucide-react";
+import { LogOut, Sparkles, Calendar, MapPin, Clock, Users, Shield } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
 import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
 import demolayLogo from "@/assets/demolay.jpeg.asset.json";
 import igualdadLogo from "@/assets/logia-igualdad.png.asset.json";
+import granLogiaLogo from "@/assets/logo-granlogia.png.asset.json";
+import bannerIgualdad from "@/assets/banner-igualdad.jpg.asset.json";
 
 const CANONICAL_URL = "https://obsidian-auction-bids.lovable.app/";
 
