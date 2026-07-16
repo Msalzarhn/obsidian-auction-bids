@@ -232,8 +232,8 @@ function Landing() {
               Faltan
             </div>
             <Countdown />
-            <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Lunes 31 de agosto de 2026</span>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Cierre: 31 de agosto de 2026</span>
               <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" /> Tegucigalpa, Honduras</span>
             </div>
           </div>
