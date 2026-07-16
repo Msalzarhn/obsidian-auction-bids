@@ -20,6 +20,7 @@ export type Database = {
           description: string
           id: string
           image_url: string | null
+          image_url_2: string | null
           sort_order: number
           starting_price: number
           title: string
@@ -29,6 +30,7 @@ export type Database = {
           description: string
           id?: string
           image_url?: string | null
+          image_url_2?: string | null
           sort_order?: number
           starting_price: number
           title: string
@@ -38,6 +40,7 @@ export type Database = {
           description?: string
           id?: string
           image_url?: string | null
+          image_url_2?: string | null
           sort_order?: number
           starting_price?: number
           title?: string
