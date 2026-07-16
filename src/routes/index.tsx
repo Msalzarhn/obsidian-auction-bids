@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { LogOut, Sparkles, Calendar, MapPin, Clock, Users, Shield } from "lucide-react";
+import { Reveal, RevealGroup, RevealItem } from "@/components/Reveal";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
 import obsidianLogo from "@/assets/capitulo-obsidiana.png.asset.json";
