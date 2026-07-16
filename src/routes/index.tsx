@@ -57,13 +57,13 @@ export const Route = createFileRoute("/")({
           name: "Subasta Masónica · Capítulo Daga de Obsidiana",
           description:
             "Subasta benéfica de objetos y prendas masónicas a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras.",
-          startDate: "2026-08-31T18:00:00-06:00",
-          endDate: "2026-08-31T23:59:59-06:00",
+          startDate: "2026-09-03T18:00:00-06:00",
+          endDate: "2026-09-03T23:59:59-06:00",
           eventStatus: "https://schema.org/EventScheduled",
-          eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
           location: {
             "@type": "Place",
-            name: "Templo Masónico",
+            name: "Templo de la R:.L:.S:.M:. Igualdad No. 1",
             address: {
               "@type": "PostalAddress",
               addressLocality: "Tegucigalpa",
