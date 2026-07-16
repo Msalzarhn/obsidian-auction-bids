@@ -1,65 +1,35 @@
+## Credenciales de administrador
 
-## Cambios a implementar
+Las credenciales del admin creado en la migración anterior son:
 
-### 1. Logo Gran Logia
-Reemplazar logo actual con el nuevo (se subirá vía `lovable-assets` desde el archivo que compartirás — o si ya está el actual, ajústame cuál). Se usa tanto en hero como en footer.
+- **Email:** `mauricio.shn@gmail.com`
+- **Contraseña:** `08594499`
 
-### 2. Evento
-- Cuenta regresiva: hasta **31 de agosto de 2026, 23:59** (ya configurado).
-- Bloque "Detalles del evento":
-  - **Fecha:** Jueves 3 de septiembre de 2026
-  - **Hora:** 6:00 p.m.
-  - **Lugar:** Templo de la R:.L:.S:.M:. Igualdad No. 1
-- Actualizar Event JSON-LD (`startDate: 2026-09-03T18:00:00-06:00`, `location.name`).
+Se ingresa desde el botón **Registrarme / Iniciar sesión** en la web (mismo formulario de login). Una vez dentro, aparece el enlace **Admin** en el nav.
 
-### 3. Footer con 4 logos
-Fila con los 4 logos (Gran Logia · Logia Igualdad · DeMolay · Capítulo Obsidiana) en escala de grises, hover a color, tamaño uniforme.
+Si el login falla, lo más probable es que el usuario en `auth.users` no quedó creado correctamente vía SQL (Supabase a veces rechaza inserts directos con `crypt`). En ese caso, en la implementación:
+1. Verifico si existe el usuario en `auth.users`.
+2. Si no existe o la contraseña no funciona, lo recreo usando el admin API (`supabaseAdmin.auth.admin.createUser`) desde una migración/one-off, y me aseguro de insertar el `profile` y el `user_roles` con rol `admin`.
+3. Confirmo login funcional.
 
-### 4. Grid de lotes: 2 columnas y aspecto 1:1
-- Grid fijo `sm:grid-cols-2`.
-- Contenedor de imagen `aspect-square`.
+## Reemplazo de logos
 
-### 5. Carrusel de 2 imágenes por lote
-- Migration: agregar columna `image_url_2 text` a `auction_items`.
-- Card: `<Carousel>` con las 2 imágenes cuando existan; single image fallback.
-- Admin: dos slots independientes ("Foto 1", "Foto 2") con upload/reemplazo por separado.
+### 1. Logo Gran Logia de Honduras
+- Subir `user-uploads://logo-granlogia-3.png` como asset nuevo (`src/assets/logo-granlogia.png.asset.json`), reemplazando el pointer actual.
+- Aparece en: hero (SupportLogo) y footer (FooterLogo) de `src/routes/index.tsx`. Al reemplazar el pointer, se actualiza en ambos lados automáticamente.
 
-### 6. Botón "Descripción" con modal
-En cada tarjeta: descripción corta (2 líneas truncadas) + botón **Descripción** que abre `Dialog` con el texto completo.
+### 2. Logo DeMolay (Orden)
+- Subir `user-uploads://Logo_Orden_Demolay_01.png` como nuevo asset reemplazando `src/assets/demolay.jpeg.asset.json` (renombrado a `.png` pointer).
+- Usado en hero (SupportLogo) y footer (FooterLogo).
 
-### 7. Pujas en vivo (realtime)
-- Habilitar Realtime en `public.bids` (`ALTER PUBLICATION supabase_realtime ADD TABLE public.bids`).
-- Cada tarjeta se suscribe a INSERTs de su `item_id` y refresca sin recargar.
-- Panel "Últimas pujas" visible bajo cada lote con nombre + logia + monto + hora.
-
-### 8. Admin Mauricio A. Salazar
-Insertar en `auth.users` con email `mauricio.shn@gmail.com`, password `08594499` (bcrypt), email confirmado. Perfil con logia "R:.L:.S:.M:. Igualdad No. 1" y `user_roles` = `admin`.
-
-### 9. Cargar los 4 artículos (textos del docx)
-Se **eliminan los items actuales** y se insertan estos 4 con sus 2 fotos c/u (subidas desde las imágenes extraídas del docx) y sus descripciones completas:
-
-1. **Busto de Francisco Morazán** — L. 1,250 — Autor QH:. Emilio España Core, 48 cm, pieza única.
-2. **Pin Oficial de DeMolay** — L. 500 — Pieza de colección.
-3. **Pisacorbatas Masónico** — L. 500 — Accesorio formal masónico.
-4. **Masones en las Letras** — L. 500 — Libro de Nicolás Brihuega, 148 págs.
-
-*(Si el precio base de "Masones en las Letras" debe ser distinto, ajústame el valor.)*
-
-### 10. Banner promocional
-Insertar el banner "Próximamente Nuestro Sitio Web · R:.L:.S:.M:. Igualdad No. 1" (imagen que acabas de subir) como sección full-width entre "Evento" y el footer, con contenedor responsive y `alt` descriptivo.
-
----
-
-## Detalles técnicos
-
-- **Migration**: `ALTER TABLE auction_items ADD COLUMN image_url_2 text` + habilitar realtime en `bids` + `REPLICA IDENTITY FULL` en `bids`.
-- **Assets vía `lovable-assets create`**: 8 fotos de producto + banner promocional.
-- **Insert admin**: `supabase--insert` con `crypt('08594499', gen_salt('bf'))`, luego `profiles` + `user_roles`.
-- **Carrusel**: `@/components/ui/carousel` (shadcn).
-- **Modal**: `Dialog` con scroll interno.
-- **Realtime**: canal por `item_id` en `AuctionItem`, cleanup en unmount.
-- **Admin editor**: refactor a dos slots de imagen con handlers separados.
+### 3. Logo Capítulo Daga de Obsidiana
+- El usuario adjuntó `user-uploads://logo-daga-1.png`. Reemplazar `src/assets/capitulo-obsidiana.jpeg.asset.json` con el nuevo pointer.
+- Usado en: nav (header), hero principal (logo grande circular con ring de oro) y footer.
+- Nota: el logo nuevo es rectangular tipo escudo/pergamino, no circular. Al usarlo con `rounded-full` se recortaría feo. Propongo:
+  - En el hero: quitar `rounded-full` y `ring`, mostrar el escudo completo con `object-contain` sobre un halo dorado.
+  - En el nav y footer: mantener contenedor pequeño pero con `object-contain` sin recorte circular.
 
 ## Fuera de alcance
-- Rediseño del banner (se usa la imagen tal cual la enviaste).
-- Cambios en OAuth/MCP.
+- No modifico lógica de subasta, base de datos de items ni diseño general.
+
+¿Confirmas que proceda?
