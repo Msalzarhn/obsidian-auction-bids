@@ -219,7 +219,9 @@ function Landing() {
 
           <Reveal immediate delay={0.25} as="div">
             <h1 className="mt-6 font-display text-4xl sm:text-6xl md:text-7xl leading-tight">
-              <span className="text-parchment">Subasta Masónica a favor del</span>
+              <span className="text-parchment">Subasta Masónica</span>
+              <br />
+              <span className="text-parchment text-2xl sm:text-3xl md:text-4xl opacity-80">a favor del</span>
               <br />
               <span className="text-gradient-gold">Capítulo Daga de Obsidiana</span>
             </h1>
