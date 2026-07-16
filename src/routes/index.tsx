@@ -197,7 +197,7 @@ function Landing() {
                 width={224}
                 height={224}
                 fetchPriority="high"
-                className="relative h-40 w-40 sm:h-56 sm:w-56 rounded-full ring-4 ring-gold/60 shadow-gold object-cover"
+                className="relative h-48 w-48 sm:h-64 sm:w-64 object-contain drop-shadow-[0_0_25px_rgba(212,175,55,0.35)]"
               />
             </div>
           </div>
