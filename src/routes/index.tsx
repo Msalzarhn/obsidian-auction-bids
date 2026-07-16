@@ -265,41 +265,42 @@ function Landing() {
 
 
           {/* Stats */}
-          <div className="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <StatCard label="Lotes" value={items.length.toString()} />
-            <StatCard label="Pujas" value={bids.length.toString()} />
-            <StatCard label="Recaudado" value={new Intl.NumberFormat("es-HN",{style:"currency",currency:"HNL",maximumFractionDigits:0}).format(totalRaised)} />
-          </div>
+          <RevealGroup stagger={0.1} className="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <RevealItem><StatCard label="Lotes" value={items.length.toString()} /></RevealItem>
+            <RevealItem><StatCard label="Pujas" value={bids.length.toString()} /></RevealItem>
+            <RevealItem><StatCard label="Recaudado" value={new Intl.NumberFormat("es-HN",{style:"currency",currency:"HNL",maximumFractionDigits:0}).format(totalRaised)} /></RevealItem>
+          </RevealGroup>
         </div>
       </section>
 
       {/* LOTES */}
       <section id="lotes" className="mx-auto max-w-7xl px-4 py-16 sm:py-24">
-        <div className="text-center mb-12">
+        <Reveal as="div" className="text-center mb-12">
           <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80">Objetos en Subasta</div>
           <h2 className="mt-2 font-display text-3xl sm:text-5xl text-gradient-gold">Lotes disponibles</h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
             Las pujas se actualizan en vivo. La puja más alta al cierre del evento gana el lote.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
+        <RevealGroup stagger={0.1} className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
           {items.map((it) => (
-            <ItemCard
-              key={it.id}
-              item={it}
-              bids={bidsByItem.get(it.id) ?? []}
-              onBid={handleBid}
-            />
+            <RevealItem key={it.id}>
+              <ItemCard
+                item={it}
+                bids={bidsByItem.get(it.id) ?? []}
+                onBid={handleBid}
+              />
+            </RevealItem>
           ))}
-        </div>
+        </RevealGroup>
       </section>
 
       {/* EVENTO */}
       <section id="evento" className="bg-royal border-y border-gold/20">
         <div className="mx-auto max-w-5xl px-4 py-16 sm:py-24">
           <div className="grid gap-10 sm:grid-cols-2 items-center">
-            <div>
+            <Reveal as="div">
               <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80">Sobre el Evento</div>
               <h2 className="mt-2 font-display text-3xl sm:text-4xl text-gradient-gold">
                 Una noche de tradición y filantropía
@@ -321,17 +322,17 @@ function Landing() {
                 <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo de la R:.L:.S:.M:. Igualdad No. 1</li>
                 <li className="flex items-center gap-2"><Users className="h-4 w-4 text-gold" /> Abierto a hermanos y familiares invitados</li>
               </ul>
-            </div>
+            </Reveal>
 
-            <div className="ornament-border rounded-xl bg-obsidian/80 p-8 shadow-gold">
+            <Reveal as="div" delay={0.15} className="ornament-border rounded-xl bg-obsidian/80 p-8 shadow-gold">
               <h3 className="font-display text-xl text-gradient-gold">Cómo participar</h3>
-              <ol className="mt-4 space-y-4 text-sm text-parchment">
-                <Step n={1} title="Regístrate">Nombre, correo, celular y logia. Solo toma un minuto.</Step>
-                <Step n={2} title="Puja en vivo">Ofrece por uno o varios lotes. Las pujas se ven en tiempo real.</Step>
-                <Step n={3} title="Gana el lote">Al cierre, la puja más alta se lleva la pieza.</Step>
-                <Step n={4} title="Realiza el pago">Coordinas el pago directamente con el tesorero de la R:.L:.S:. Igualdad No. 1.</Step>
-              </ol>
-            </div>
+              <RevealGroup as="ol" stagger={0.1} className="mt-4 space-y-4 text-sm text-parchment">
+                <RevealItem><Step n={1} title="Regístrate">Nombre, correo, celular y logia. Solo toma un minuto.</Step></RevealItem>
+                <RevealItem><Step n={2} title="Puja en vivo">Ofrece por uno o varios lotes. Las pujas se ven en tiempo real.</Step></RevealItem>
+                <RevealItem><Step n={3} title="Gana el lote">Al cierre, la puja más alta se lleva la pieza.</Step></RevealItem>
+                <RevealItem><Step n={4} title="Realiza el pago">Coordinas el pago directamente con el tesorero de la R:.L:.S:. Igualdad No. 1.</Step></RevealItem>
+              </RevealGroup>
+            </Reveal>
           </div>
         </div>
       </section>
@@ -339,7 +340,7 @@ function Landing() {
 
       {/* BANNER PROMOCIONAL — Próximamente sitio web Igualdad No. 1 */}
       <section aria-label="Próximamente sitio web R:.L:.S:.M:. Igualdad No. 1" className="bg-obsidian">
-        <div className="mx-auto max-w-6xl px-4 py-10">
+        <Reveal as="div" className="mx-auto max-w-6xl px-4 py-10">
           <a
             href="#"
             className="block overflow-hidden rounded-xl ring-1 ring-gold/30 shadow-gold transition hover:ring-gold/60"
@@ -352,8 +353,9 @@ function Landing() {
               loading="lazy"
             />
           </a>
-        </div>
+        </Reveal>
       </section>
+
 
       {/* FOOTER */}
       <footer className="border-t border-gold/20 bg-obsidian">
