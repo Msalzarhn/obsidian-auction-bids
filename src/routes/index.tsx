@@ -396,13 +396,15 @@ function SupportLogo({ src, label }: { src: string; label: string }) {
   );
 }
 
-function SupportLogoPlaceholder({ label }: { label: string }) {
+function FooterLogo({ src, label }: { src: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border border-dashed border-gold/40 bg-obsidian/40 flex items-center justify-center">
-        <Landmark className="h-8 w-8 text-gold/50" />
-      </div>
-      <div className="text-[10px] uppercase tracking-widest text-gold-soft/70 max-w-[10rem]">{label}</div>
+    <div className="flex flex-col items-center gap-2 group">
+      <img
+        src={src}
+        alt={label}
+        className="h-14 sm:h-16 w-auto object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
+      />
+      <div className="text-[9px] uppercase tracking-widest text-gold-soft/60 group-hover:text-gold-soft max-w-[9rem] text-center">{label}</div>
     </div>
   );
 }
