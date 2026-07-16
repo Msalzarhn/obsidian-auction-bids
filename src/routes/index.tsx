@@ -146,7 +146,7 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-gold/20 bg-obsidian/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-10 w-10 rounded-full ring-1 ring-gold/40" />
+            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-10 w-10 object-contain" />
             <div className="hidden sm:block leading-tight">
               <div className="font-display text-sm text-gradient-gold">Daga de Obsidiana</div>
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Subasta Benéfica DeMolay</div>
