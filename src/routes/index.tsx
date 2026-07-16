@@ -189,7 +189,7 @@ function Landing() {
       >
         <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 text-center">
           {/* Logo principal — Capítulo Daga de Obsidiana */}
-          <div className="flex justify-center mb-4">
+          <Reveal immediate as="div" className="flex justify-center mb-4">
             <div className="relative">
               <div className="absolute inset-0 -m-6 rounded-full bg-gold/20 blur-2xl" />
               <img
@@ -201,34 +201,38 @@ function Landing() {
                 className="relative h-48 w-48 sm:h-64 sm:w-64 object-contain drop-shadow-[0_0_25px_rgba(212,175,55,0.35)]"
               />
             </div>
-          </div>
-          <div className="text-xs uppercase tracking-[0.5em] text-gold-soft/90 mb-8">
+          </Reveal>
+          <Reveal immediate delay={0.1} as="div" className="text-xs uppercase tracking-[0.5em] text-gold-soft/90 mb-8">
             Capítulo Daga de Obsidiana · DeMolay
-          </div>
+          </Reveal>
 
           {/* Logos de apoyo */}
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
+          <Reveal immediate delay={0.15} as="div" className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
             <SupportLogo src={granLogiaLogo.url} label="Gran Logia de Honduras" />
             <SupportLogo src={igualdadLogo.url} label="R:.L:.S:.M:. Igualdad No. 1" />
             <SupportLogo src={demolayLogo.url} label="Orden DeMolay" />
-          </div>
+          </Reveal>
 
-          <div className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-obsidian/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-gold-soft">
+          <Reveal immediate delay={0.2} as="div" className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-obsidian/60 px-4 py-1.5 text-[11px] uppercase tracking-[0.3em] text-gold-soft">
             <Sparkles className="h-3 w-3" /> Subasta Benéfica · Virtus et Honos
-          </div>
+          </Reveal>
 
-          <h1 className="mt-6 font-display text-4xl sm:text-6xl md:text-7xl leading-tight">
-            <span className="text-parchment">Subasta Masónica a favor del</span>
-            <br />
-            <span className="text-gradient-gold">Capítulo Daga de Obsidiana</span>
-          </h1>
+          <Reveal immediate delay={0.25} as="div">
+            <h1 className="mt-6 font-display text-4xl sm:text-6xl md:text-7xl leading-tight">
+              <span className="text-parchment">Subasta Masónica a favor del</span>
+              <br />
+              <span className="text-gradient-gold">Capítulo Daga de Obsidiana</span>
+            </h1>
+          </Reveal>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground">
-            Objetos y prendas masónicas de colección. Cada puja apoya la formación
-            de los jóvenes de la Orden DeMolay de Honduras.
-          </p>
+          <Reveal immediate delay={0.35} as="div">
+            <p className="mx-auto mt-6 max-w-2xl text-lg sm:text-xl text-muted-foreground">
+              Objetos y prendas masónicas de colección. Cada puja apoya la formación
+              de los jóvenes de la Orden DeMolay de Honduras.
+            </p>
+          </Reveal>
 
-          <div className="mx-auto mt-10 max-w-2xl">
+          <Reveal immediate delay={0.45} as="div" className="mx-auto mt-10 max-w-2xl">
             <div className="text-xs uppercase tracking-[0.4em] text-gold-soft/80 mb-4">
               Faltan
             </div>
@@ -237,9 +241,9 @@ function Landing() {
               <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Cierre: 31 de agosto de 2026</span>
               <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" /> Tegucigalpa, Honduras</span>
             </div>
-          </div>
+          </Reveal>
 
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <Reveal immediate delay={0.55} as="div" className="mt-10 flex flex-wrap justify-center gap-3">
             <Button
               size="lg"
               onClick={() => document.getElementById("lotes")?.scrollIntoView({ behavior: "smooth" })}
@@ -257,7 +261,8 @@ function Landing() {
                 Registrarme para pujar
               </Button>
             )}
-          </div>
+          </Reveal>
+
 
           {/* Stats */}
           <div className="mt-16 grid grid-cols-3 gap-4 max-w-3xl mx-auto">
