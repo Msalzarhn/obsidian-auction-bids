@@ -285,7 +285,7 @@ function PhotoSlot({
   label: string;
   imageUrl: string | null;
   uploading: boolean;
-  fileRef: React.RefObject<HTMLInputElement>;
+  fileRef: React.RefObject<HTMLInputElement | null>;
   onFile: (f: File) => void;
   onClear: () => void;
 }) {
