@@ -40,6 +40,7 @@ interface Item {
   starting_price: number;
   sort_order: number;
   image_url: string | null;
+  image_url_2: string | null;
 }
 
 function AdminPage() {
