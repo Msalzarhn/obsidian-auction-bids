@@ -15,8 +15,8 @@ import { toast } from "sonner";
 import { LogOut, Sparkles, Calendar, MapPin, Clock, Users, Shield } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
-import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
-import demolayLogo from "@/assets/demolay.jpeg.asset.json";
+import obsidianLogo from "@/assets/capitulo-obsidiana.png.asset.json";
+import demolayLogo from "@/assets/demolay.png.asset.json";
 import igualdadLogo from "@/assets/logia-igualdad.png.asset.json";
 import granLogiaLogo from "@/assets/logo-granlogia.png.asset.json";
 import bannerIgualdad from "@/assets/banner-igualdad.jpg.asset.json";
@@ -146,7 +146,7 @@ function Landing() {
       <header className="sticky top-0 z-40 border-b border-gold/20 bg-obsidian/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-10 w-10 rounded-full ring-1 ring-gold/40" />
+            <img src={obsidianLogo.url} alt="Capítulo Daga de Obsidiana" className="h-10 w-10 object-contain" />
             <div className="hidden sm:block leading-tight">
               <div className="font-display text-sm text-gradient-gold">Daga de Obsidiana</div>
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Subasta Benéfica DeMolay</div>
@@ -197,7 +197,7 @@ function Landing() {
                 width={224}
                 height={224}
                 fetchPriority="high"
-                className="relative h-40 w-40 sm:h-56 sm:w-56 rounded-full ring-4 ring-gold/60 shadow-gold object-cover"
+                className="relative h-48 w-48 sm:h-64 sm:w-64 object-contain drop-shadow-[0_0_25px_rgba(212,175,55,0.35)]"
               />
             </div>
           </div>
