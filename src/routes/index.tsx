@@ -12,12 +12,14 @@ import {
 } from "@/components/AuctionItem";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { LogOut, Sparkles, Calendar, MapPin, Users, Shield, Landmark } from "lucide-react";
+import { LogOut, Sparkles, Calendar, MapPin, Clock, Users, Shield } from "lucide-react";
 
 import heroBg from "@/assets/hero-bg.jpg.asset.json";
 import obsidianLogo from "@/assets/capitulo-obsidiana.jpeg.asset.json";
 import demolayLogo from "@/assets/demolay.jpeg.asset.json";
 import igualdadLogo from "@/assets/logia-igualdad.png.asset.json";
+import granLogiaLogo from "@/assets/logo-granlogia.png.asset.json";
+import bannerIgualdad from "@/assets/banner-igualdad.jpg.asset.json";
 
 const CANONICAL_URL = "https://obsidian-auction-bids.lovable.app/";
 
@@ -55,13 +57,13 @@ export const Route = createFileRoute("/")({
           name: "Subasta Masónica · Capítulo Daga de Obsidiana",
           description:
             "Subasta benéfica de objetos y prendas masónicas a favor del Capítulo Daga de Obsidiana, Orden DeMolay de Honduras.",
-          startDate: "2026-08-31T18:00:00-06:00",
-          endDate: "2026-08-31T23:59:59-06:00",
+          startDate: "2026-09-03T18:00:00-06:00",
+          endDate: "2026-09-03T23:59:59-06:00",
           eventStatus: "https://schema.org/EventScheduled",
-          eventAttendanceMode: "https://schema.org/MixedEventAttendanceMode",
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
           location: {
             "@type": "Place",
-            name: "Templo Masónico",
+            name: "Templo de la R:.L:.S:.M:. Igualdad No. 1",
             address: {
               "@type": "PostalAddress",
               addressLocality: "Tegucigalpa",
@@ -205,8 +207,8 @@ function Landing() {
 
           {/* Logos de apoyo */}
           <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 mb-10 opacity-90">
-            <SupportLogo src={igualdadLogo.url} label="R:.L:.S:. Igualdad No. 1" />
-            <SupportLogoPlaceholder label="Gran Logia de Honduras" />
+            <SupportLogo src={granLogiaLogo.url} label="Gran Logia de Honduras" />
+            <SupportLogo src={igualdadLogo.url} label="R:.L:.S:.M:. Igualdad No. 1" />
             <SupportLogo src={demolayLogo.url} label="Orden DeMolay" />
           </div>
 
@@ -230,8 +232,8 @@ function Landing() {
               Faltan
             </div>
             <Countdown />
-            <div className="mt-4 flex items-center justify-center gap-4 text-sm text-muted-foreground">
-              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Lunes 31 de agosto de 2026</span>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1"><Calendar className="h-4 w-4 text-gold" /> Cierre: 31 de agosto de 2026</span>
               <span className="inline-flex items-center gap-1"><MapPin className="h-4 w-4 text-gold" /> Tegucigalpa, Honduras</span>
             </div>
           </div>
@@ -275,7 +277,7 @@ function Landing() {
           </p>
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
           {items.map((it) => (
             <ItemCard
               key={it.id}
@@ -308,8 +310,9 @@ function Landing() {
                 <span className="italic text-gold-soft"> Virtus et Honos</span>.
               </p>
               <ul className="mt-6 space-y-2 text-sm text-parchment">
-                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Lunes 31 de agosto de 2026</li>
-                <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo Masónico · Tegucigalpa</li>
+                <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-gold" /> Jueves 3 de septiembre de 2026</li>
+                <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-gold" /> 6:00 p.m.</li>
+                <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-gold" /> Templo de la R:.L:.S:.M:. Igualdad No. 1</li>
                 <li className="flex items-center gap-2"><Users className="h-4 w-4 text-gold" /> Abierto a hermanos y familiares invitados</li>
               </ul>
             </div>
@@ -328,18 +331,37 @@ function Landing() {
       </section>
       </main>
 
+      {/* BANNER PROMOCIONAL — Próximamente sitio web Igualdad No. 1 */}
+      <section aria-label="Próximamente sitio web R:.L:.S:.M:. Igualdad No. 1" className="bg-obsidian">
+        <div className="mx-auto max-w-6xl px-4 py-10">
+          <a
+            href="#"
+            className="block overflow-hidden rounded-xl ring-1 ring-gold/30 shadow-gold transition hover:ring-gold/60"
+            aria-label="Próximamente nuestro sitio web · R:.L:.S:.M:. Igualdad No. 1"
+          >
+            <img
+              src={bannerIgualdad.url}
+              alt="Próximamente nuestro sitio web · R:.L:.S:.M:. Igualdad No. 1"
+              className="w-full h-auto block"
+              loading="lazy"
+            />
+          </a>
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="border-t border-gold/20 bg-obsidian">
         <div className="mx-auto max-w-6xl px-4 py-10 text-center">
-          <div className="flex justify-center gap-6 mb-4 opacity-80">
-            <img src={demolayLogo.url} alt="" className="h-12 rounded" />
-            <img src={obsidianLogo.url} alt="" className="h-12 rounded" />
-            <img src={igualdadLogo.url} alt="" className="h-12" />
+          <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-10 mb-6">
+            <FooterLogo src={granLogiaLogo.url} label="Gran Logia de Honduras" />
+            <FooterLogo src={igualdadLogo.url} label="R:.L:.S:.M:. Igualdad No. 1" />
+            <FooterLogo src={demolayLogo.url} label="Orden DeMolay" />
+            <FooterLogo src={obsidianLogo.url} label="Capítulo Daga de Obsidiana" />
           </div>
           <p className="font-display text-sm text-gradient-gold">Virtus et Honos</p>
           <p className="mt-2 text-xs text-muted-foreground">
             © {new Date().getFullYear()} Capítulo Daga de Obsidiana · Organizado por la
-            R:.L:.S:. Igualdad No. 1 · Tegucigalpa, Honduras
+            R:.L:.S:.M:. Igualdad No. 1 · Tegucigalpa, Honduras
           </p>
         </div>
       </footer>
@@ -374,13 +396,15 @@ function SupportLogo({ src, label }: { src: string; label: string }) {
   );
 }
 
-function SupportLogoPlaceholder({ label }: { label: string }) {
+function FooterLogo({ src, label }: { src: string; label: string }) {
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-full border border-dashed border-gold/40 bg-obsidian/40 flex items-center justify-center">
-        <Landmark className="h-8 w-8 text-gold/50" />
-      </div>
-      <div className="text-[10px] uppercase tracking-widest text-gold-soft/70 max-w-[10rem]">{label}</div>
+    <div className="flex flex-col items-center gap-2 group">
+      <img
+        src={src}
+        alt={label}
+        className="h-14 sm:h-16 w-auto object-contain grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition duration-300"
+      />
+      <div className="text-[9px] uppercase tracking-widest text-gold-soft/60 group-hover:text-gold-soft max-w-[9rem] text-center">{label}</div>
     </div>
   );
 }
