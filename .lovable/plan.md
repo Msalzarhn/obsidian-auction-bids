@@ -1,35 +1,33 @@
-## Credenciales de administrador
 
-Las credenciales del admin creado en la migración anterior son:
+## Objetivo
+Añadir animaciones suaves y modernas estilo iOS/Apple al hacer scroll en el landing (`src/routes/index.tsx`): los elementos entran con fade + subtle translate/scale al aparecer en viewport, con easing tipo Apple (spring suave) y salen con reverso al salir.
 
-- **Email:** `mauricio.shn@gmail.com`
-- **Contraseña:** `08594499`
+## Enfoque
+Usar **Framer Motion** (`motion/react`) — ya es idiomático para React 19 y ofrece:
+- `whileInView` con `viewport={{ once: false, amount: 0.2 }}` para reaccionar en ambos sentidos (bajar/subir).
+- Easing tipo Apple: `[0.22, 1, 0.36, 1]` (ease-out expo) o spring `{ stiffness: 120, damping: 20 }`.
+- `staggerChildren` para revelar grids de lotes en cascada.
 
-Se ingresa desde el botón **Registrarme / Iniciar sesión** en la web (mismo formulario de login). Una vez dentro, aparece el enlace **Admin** en el nav.
+## Cambios
 
-Si el login falla, lo más probable es que el usuario en `auth.users` no quedó creado correctamente vía SQL (Supabase a veces rechaza inserts directos con `crypt`). En ese caso, en la implementación:
-1. Verifico si existe el usuario en `auth.users`.
-2. Si no existe o la contraseña no funciona, lo recreo usando el admin API (`supabaseAdmin.auth.admin.createUser`) desde una migración/one-off, y me aseguro de insertar el `profile` y el `user_roles` con rol `admin`.
-3. Confirmo login funcional.
+1. **Instalar** `motion` (paquete oficial actual de Framer Motion).
 
-## Reemplazo de logos
+2. **Crear `src/components/Reveal.tsx`**
+   - Wrapper reutilizable `<Reveal>` y `<RevealGroup>` (stagger).
+   - Variantes: `hidden` (opacity 0, y: 24, scale: 0.98) → `visible` (opacity 1, y: 0, scale: 1).
+   - Duración ~0.7s, easing `[0.22, 1, 0.36, 1]`.
+   - Respeta `prefers-reduced-motion` (desactiva transform, deja opacity mínima).
 
-### 1. Logo Gran Logia de Honduras
-- Subir `user-uploads://logo-granlogia-3.png` como asset nuevo (`src/assets/logo-granlogia.png.asset.json`), reemplazando el pointer actual.
-- Aparece en: hero (SupportLogo) y footer (FooterLogo) de `src/routes/index.tsx`. Al reemplazar el pointer, se actualiza en ambos lados automáticamente.
+3. **Editar `src/routes/index.tsx`**
+   - Envolver bloques del HERO (logo, badge, título, párrafo, countdown, CTAs, stats) en `<Reveal>` con delays escalonados.
+   - Envolver header de sección "Lotes" y cada `<ItemCard>` dentro de un `RevealGroup` (stagger 0.08s).
+   - Envolver columnas de sección "Evento" (texto y tarjeta "Cómo participar") y los `<Step>`.
+   - Envolver banner Igualdad y footer.
+   - Mantener el sticky nav sin animación.
 
-### 2. Logo DeMolay (Orden)
-- Subir `user-uploads://Logo_Orden_Demolay_01.png` como nuevo asset reemplazando `src/assets/demolay.jpeg.asset.json` (renombrado a `.png` pointer).
-- Usado en hero (SupportLogo) y footer (FooterLogo).
+4. **Sin cambios** en lógica de auth, pujas, datos o estilos globales.
 
-### 3. Logo Capítulo Daga de Obsidiana
-- El usuario adjuntó `user-uploads://logo-daga-1.png`. Reemplazar `src/assets/capitulo-obsidiana.jpeg.asset.json` con el nuevo pointer.
-- Usado en: nav (header), hero principal (logo grande circular con ring de oro) y footer.
-- Nota: el logo nuevo es rectangular tipo escudo/pergamino, no circular. Al usarlo con `rounded-full` se recortaría feo. Propongo:
-  - En el hero: quitar `rounded-full` y `ring`, mostrar el escudo completo con `object-contain` sobre un halo dorado.
-  - En el nav y footer: mantener contenedor pequeño pero con `object-contain` sin recorte circular.
-
-## Fuera de alcance
-- No modifico lógica de subasta, base de datos de items ni diseño general.
-
-¿Confirmas que proceda?
+## Detalles técnicos
+- `viewport={{ once: false, amount: 0.15, margin: "0px 0px -10% 0px" }}` para que reaparezcan al volver a scrollear.
+- Para el hero (visible al cargar), usar `initial="hidden" animate="visible"` en vez de `whileInView` para evitar flicker.
+- Sin librerías extra (no GSAP, no Lenis) — se mantiene ligero.
