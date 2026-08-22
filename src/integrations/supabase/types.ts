@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      auction_item_images: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "auction_item_images_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "auction_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       auction_items: {
         Row: {
           created_at: string
