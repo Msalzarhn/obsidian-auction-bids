@@ -23,7 +23,9 @@ export interface AuctionItem {
   sort_order: number;
   image_url?: string | null;
   image_url_2?: string | null;
+  images?: string[];
 }
+
 
 export interface Bid {
   id: string;
@@ -52,7 +54,11 @@ export function ItemCard({
   const bidCount = bids.length;
   const [descOpen, setDescOpen] = useState(false);
 
-  const images = [item.image_url, item.image_url_2].filter(Boolean) as string[];
+  const images =
+    item.images && item.images.length
+      ? item.images
+      : ([item.image_url, item.image_url_2].filter(Boolean) as string[]);
+
 
   return (
     <div className="ornament-border group relative flex flex-col overflow-hidden rounded-xl bg-card shadow-deep transition-transform hover:-translate-y-1">

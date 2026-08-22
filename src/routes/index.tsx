@@ -93,8 +93,22 @@ function Landing() {
   const [activeMax, setActiveMax] = useState(0);
 
   useEffect(() => {
-    supabase.from("auction_items").select("*").order("sort_order")
-      .then(({ data }) => setItems((data ?? []) as AuctionItem[]));
+    supabase
+      .from("auction_items")
+      .select("*, auction_item_images(url, sort_order)")
+      .order("sort_order")
+      .then(({ data }) =>
+        setItems(
+          ((data ?? []) as any[]).map((row) => ({
+            ...row,
+            images: (row.auction_item_images ?? [])
+              .slice()
+              .sort((a: any, b: any) => a.sort_order - b.sort_order)
+              .map((img: any) => img.url as string),
+          })) as AuctionItem[],
+        ),
+      );
+
     supabase.from("bids").select("*").order("created_at", { ascending: false })
       .then(({ data }) => setBids((data ?? []) as Bid[]));
 
@@ -285,17 +299,18 @@ function Landing() {
           </p>
         </Reveal>
 
-        <RevealGroup stagger={0.1} className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
-          {items.map((it) => (
-            <RevealItem key={it.id}>
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
+          {items.map((it, i) => (
+            <Reveal key={it.id} amount={0.1} delay={(i % 2) * 0.08}>
               <ItemCard
                 item={it}
                 bids={bidsByItem.get(it.id) ?? []}
                 onBid={handleBid}
               />
-            </RevealItem>
+            </Reveal>
           ))}
-        </RevealGroup>
+        </div>
+
       </section>
 
       {/* EVENTO */}

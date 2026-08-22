@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2, Copy } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 
 const ADMIN_URL = "https://obsidian-auction-bids.lovable.app/admin";
 
@@ -33,6 +33,12 @@ export const Route = createFileRoute("/admin")({
   }),
 });
 
+interface ItemImage {
+  id: string;
+  url: string;
+  sort_order: number;
+}
+
 interface Item {
   id: string;
   title: string;
@@ -41,7 +47,9 @@ interface Item {
   sort_order: number;
   image_url: string | null;
   image_url_2: string | null;
+  images: ItemImage[];
 }
+
 
 function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
@@ -59,10 +67,21 @@ function AdminPage() {
 
   async function refresh() {
     setFetching(true);
-    const { data } = await supabase.from("auction_items").select("*").order("sort_order");
-    setItems((data ?? []) as Item[]);
+    const { data } = await supabase
+      .from("auction_items")
+      .select("*, auction_item_images(id, url, sort_order)")
+      .order("sort_order");
+    setItems(
+      ((data ?? []) as any[]).map((row) => ({
+        ...row,
+        images: ((row.auction_item_images ?? []) as ItemImage[])
+          .slice()
+          .sort((a, b) => a.sort_order - b.sort_order),
+      })) as Item[],
+    );
     setFetching(false);
   }
+
 
   useEffect(() => {
     if (isAdmin) refresh();
@@ -131,15 +150,34 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
   const [description, setDescription] = useState(item.description);
   const [startingPrice, setStartingPrice] = useState(String(item.starting_price));
   const [sortOrder, setSortOrder] = useState(String(item.sort_order));
-  const [imageUrl, setImageUrl] = useState<string | null>(item.image_url);
-  const [imageUrl2, setImageUrl2] = useState<string | null>(item.image_url_2);
+  const [images, setImages] = useState<ItemImage[]>(item.images ?? []);
   const [saving, setSaving] = useState(false);
-  const [uploading1, setUploading1] = useState(false);
-  const [uploading2, setUploading2] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [duplicating, setDuplicating] = useState(false);
-  const fileRef1 = useRef<HTMLInputElement>(null);
-  const fileRef2 = useRef<HTMLInputElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function syncCover(list: ItemImage[]) {
+    await supabase
+      .from("auction_items")
+      .update({
+        image_url: list[0]?.url ?? null,
+        image_url_2: list[1]?.url ?? null,
+      })
+      .eq("id", item.id);
+  }
+
+  async function reloadImages() {
+    const { data } = await supabase
+      .from("auction_item_images")
+      .select("id, url, sort_order")
+      .eq("item_id", item.id)
+      .order("sort_order");
+    const list = (data ?? []) as ItemImage[];
+    setImages(list);
+    await syncCover(list);
+    return list;
+  }
 
   async function save() {
     setSaving(true);
@@ -148,8 +186,8 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
       description,
       starting_price: Number(startingPrice),
       sort_order: Number(sortOrder),
-      image_url: imageUrl,
-      image_url_2: imageUrl2,
+      image_url: images[0]?.url ?? null,
+      image_url_2: images[1]?.url ?? null,
     }).eq("id", item.id);
     setSaving(false);
     if (error) return toast.error(error.message);
@@ -176,63 +214,159 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
       .limit(1)
       .maybeSingle();
     const nextOrder = (maxRow?.sort_order ?? 0) + 1;
-    const { error } = await supabase.from("auction_items").insert({
+    const { data: created, error } = await supabase.from("auction_items").insert({
       title: `${title} (copia)`,
       description,
       starting_price: Number(startingPrice),
       sort_order: nextOrder,
-      image_url: imageUrl,
-      image_url_2: imageUrl2,
-    });
+      image_url: images[0]?.url ?? null,
+      image_url_2: images[1]?.url ?? null,
+    }).select("id").single();
+    if (!error && created && images.length) {
+      await supabase.from("auction_item_images").insert(
+        images.map((img, i) => ({ item_id: created.id, url: img.url, sort_order: i })),
+      );
+    }
     setDuplicating(false);
     if (error) return toast.error(error.message);
     toast.success("Artículo duplicado");
     onChange();
   }
 
-  async function uploadFile(
-    file: File,
-    slot: 1 | 2,
-  ) {
-    const setUploading = slot === 1 ? setUploading1 : setUploading2;
-    const setImg = slot === 1 ? setImageUrl : setImageUrl2;
+  async function uploadFiles(files: FileList) {
     setUploading(true);
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const path = `${item.id}/slot${slot}-${Date.now()}.${ext}`;
-    const { error: upErr } = await supabase.storage.from("auction-images").upload(path, file, {
-      cacheControl: "3600",
-      upsert: false,
-      contentType: file.type,
-    });
-    if (upErr) { setUploading(false); return toast.error(upErr.message); }
-    const { data: signed, error: signErr } = await supabase.storage
-      .from("auction-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+    let order = images.length;
+    for (const file of Array.from(files)) {
+      const ext = file.name.split(".").pop() ?? "jpg";
+      const path = `${item.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage.from("auction-images").upload(path, file, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: file.type,
+      });
+      if (upErr) { toast.error(upErr.message); continue; }
+      const { data: signed, error: signErr } = await supabase.storage
+        .from("auction-images").createSignedUrl(path, 60 * 60 * 24 * 365 * 5);
+      if (signErr || !signed) { toast.error(signErr?.message ?? "No se pudo firmar la URL"); continue; }
+      const { error: insErr } = await supabase.from("auction_item_images").insert({
+        item_id: item.id,
+        url: signed.signedUrl,
+        sort_order: order++,
+      });
+      if (insErr) toast.error(insErr.message);
+    }
+    await reloadImages();
     setUploading(false);
-    if (signErr || !signed) return toast.error(signErr?.message ?? "No se pudo firmar la URL");
-    setImg(signed.signedUrl);
-    toast.success(`Foto ${slot} lista — recuerda pulsar Guardar`);
+    if (fileRef.current) fileRef.current.value = "";
+    toast.success("Fotos actualizadas");
+  }
+
+  async function removeImage(img: ItemImage) {
+    const { error } = await supabase.from("auction_item_images").delete().eq("id", img.id);
+    if (error) return toast.error(error.message);
+    const rest = images.filter((i) => i.id !== img.id);
+    await Promise.all(
+      rest.map((i, idx) =>
+        supabase.from("auction_item_images").update({ sort_order: idx }).eq("id", i.id),
+      ),
+    );
+    await reloadImages();
+    toast.success("Foto eliminada");
+  }
+
+  async function move(index: number, dir: -1 | 1) {
+    const target = index + dir;
+    if (target < 0 || target >= images.length) return;
+    const list = images.slice();
+    [list[index], list[target]] = [list[target], list[index]];
+    setImages(list);
+    await Promise.all(
+      list.map((i, idx) =>
+        supabase.from("auction_item_images").update({ sort_order: idx }).eq("id", i.id),
+      ),
+    );
+    await reloadImages();
   }
 
   return (
     <div className="ornament-border rounded-xl bg-card p-5 shadow-deep">
       <div className="grid gap-5 sm:grid-cols-[440px_1fr]">
-        <div className="grid grid-cols-2 gap-3">
-          <PhotoSlot
-            label="Foto 1"
-            imageUrl={imageUrl}
-            uploading={uploading1}
-            fileRef={fileRef1}
-            onFile={(f) => uploadFile(f, 1)}
-            onClear={() => setImageUrl(null)}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="text-[10px] uppercase tracking-widest text-gold-soft/70">
+              Galería ({images.length} {images.length === 1 ? "foto" : "fotos"}) · la primera es la portada
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {images.map((img, idx) => (
+              <div key={img.id} className="space-y-1">
+                <div className="relative aspect-square overflow-hidden rounded-lg border border-gold/20 bg-obsidian/60">
+                  <img src={img.url} alt={`${title} — foto ${idx + 1}`} className="h-full w-full object-cover" />
+                  {idx === 0 && (
+                    <span className="absolute top-1 left-1 rounded bg-obsidian/80 px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-gold">
+                      Portada
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-gold/40 text-gold-soft px-1"
+                    onClick={() => move(idx, -1)}
+                    disabled={idx === 0}
+                    title="Mover antes"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-gold/40 text-gold-soft px-1"
+                    onClick={() => move(idx, 1)}
+                    disabled={idx === images.length - 1}
+                    title="Mover después"
+                  >
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-crimson/50 text-crimson hover:bg-crimson/10 px-1"
+                    onClick={() => removeImage(img)}
+                    title="Eliminar foto"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {images.length === 0 && (
+              <div className="col-span-3 flex aspect-[3/1] items-center justify-center rounded-lg border border-dashed border-gold/20 text-xs text-muted-foreground">
+                Sin fotos
+              </div>
+            )}
+          </div>
+
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="hidden"
+            onChange={(e) => e.target.files?.length && uploadFiles(e.target.files)}
           />
-          <PhotoSlot
-            label="Foto 2"
-            imageUrl={imageUrl2}
-            uploading={uploading2}
-            fileRef={fileRef2}
-            onFile={(f) => uploadFile(f, 2)}
-            onClear={() => setImageUrl2(null)}
-          />
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full border-gold/40 text-gold-soft"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+          >
+            {uploading ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1" />}
+            Agregar fotos
+          </Button>
         </div>
 
         <div className="space-y-3">
@@ -250,7 +384,7 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
               <Input type="number" value={startingPrice} onChange={(e) => setStartingPrice(e.target.value)} />
             </div>
             <div>
-              <Label>Orden</Label>
+              <Label>N.º de lote</Label>
               <Input type="number" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} />
             </div>
           </div>
@@ -274,61 +408,3 @@ function ItemEditor({ item, onChange }: { item: Item; onChange: () => void }) {
   );
 }
 
-function PhotoSlot({
-  label,
-  imageUrl,
-  uploading,
-  fileRef,
-  onFile,
-  onClear,
-}: {
-  label: string;
-  imageUrl: string | null;
-  uploading: boolean;
-  fileRef: React.RefObject<HTMLInputElement | null>;
-  onFile: (f: File) => void;
-  onClear: () => void;
-}) {
-  return (
-    <div className="space-y-2">
-      <div className="text-[10px] uppercase tracking-widest text-gold-soft/70">{label}</div>
-      <div className="aspect-square rounded-lg border border-gold/20 bg-obsidian/60 overflow-hidden flex items-center justify-center">
-        {imageUrl ? (
-          <img src={imageUrl} alt={label} className="w-full h-full object-cover" />
-        ) : (
-          <span className="text-xs text-muted-foreground">Sin foto</span>
-        )}
-      </div>
-      <input
-        ref={fileRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])}
-      />
-      <div className="flex gap-1">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 border-gold/40 text-gold-soft"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploading}
-        >
-          {uploading ? <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" /> : <Upload className="h-3.5 w-3.5 mr-1" />}
-          {imageUrl ? "Cambiar" : "Subir"}
-        </Button>
-        {imageUrl && (
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-crimson/50 text-crimson hover:bg-crimson/10 px-2"
-            onClick={onClear}
-            title="Quitar foto"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
-}
