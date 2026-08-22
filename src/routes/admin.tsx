@@ -67,10 +67,21 @@ function AdminPage() {
 
   async function refresh() {
     setFetching(true);
-    const { data } = await supabase.from("auction_items").select("*").order("sort_order");
-    setItems((data ?? []) as Item[]);
+    const { data } = await supabase
+      .from("auction_items")
+      .select("*, auction_item_images(id, url, sort_order)")
+      .order("sort_order");
+    setItems(
+      ((data ?? []) as any[]).map((row) => ({
+        ...row,
+        images: ((row.auction_item_images ?? []) as ItemImage[])
+          .slice()
+          .sort((a, b) => a.sort_order - b.sort_order),
+      })) as Item[],
+    );
     setFetching(false);
   }
+
 
   useEffect(() => {
     if (isAdmin) refresh();
