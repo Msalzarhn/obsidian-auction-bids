@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2, Copy } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Upload, Save, Loader2, Copy, ChevronLeft, ChevronRight } from "lucide-react";
 
 const ADMIN_URL = "https://obsidian-auction-bids.lovable.app/admin";
 
