@@ -33,6 +33,12 @@ export const Route = createFileRoute("/admin")({
   }),
 });
 
+interface ItemImage {
+  id: string;
+  url: string;
+  sort_order: number;
+}
+
 interface Item {
   id: string;
   title: string;
@@ -41,7 +47,9 @@ interface Item {
   sort_order: number;
   image_url: string | null;
   image_url_2: string | null;
+  images: ItemImage[];
 }
+
 
 function AdminPage() {
   const { user, isAdmin, loading } = useAuth();
