@@ -23,7 +23,9 @@ export interface AuctionItem {
   sort_order: number;
   image_url?: string | null;
   image_url_2?: string | null;
+  images?: string[];
 }
+
 
 export interface Bid {
   id: string;
