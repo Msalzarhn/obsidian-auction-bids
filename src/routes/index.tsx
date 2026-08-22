@@ -299,17 +299,18 @@ function Landing() {
           </p>
         </Reveal>
 
-        <RevealGroup stagger={0.1} className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
-          {items.map((it) => (
-            <RevealItem key={it.id}>
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 max-w-4xl mx-auto">
+          {items.map((it, i) => (
+            <Reveal key={it.id} amount={0.1} delay={(i % 2) * 0.08}>
               <ItemCard
                 item={it}
                 bids={bidsByItem.get(it.id) ?? []}
                 onBid={handleBid}
               />
-            </RevealItem>
+            </Reveal>
           ))}
-        </RevealGroup>
+        </div>
+
       </section>
 
       {/* EVENTO */}
