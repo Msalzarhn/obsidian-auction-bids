@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788274616539,
+      "tag": "0000_extend_auction_deadline_5_minutes",
+      "breakpoints": true
+    }
+  ]
+}
