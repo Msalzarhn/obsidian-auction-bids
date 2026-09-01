@@ -60,6 +60,22 @@ function AdminPage() {
   const navigate = useNavigate();
   const [items, setItems] = useState<Item[]>([]);
   const [fetching, setFetching] = useState(true);
+  const [exporting, setExporting] = useState(false);
+  const fetchReport = useServerFn(getAuctionReport);
+
+  async function exportReport() {
+    setExporting(true);
+    try {
+      const report = await fetchReport({ data: undefined });
+      await downloadAuctionReport(report);
+      toast.success("Informe descargado");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "No se pudo generar el informe");
+    } finally {
+      setExporting(false);
+    }
+  }
+
 
   useEffect(() => {
     if (loading) return;
