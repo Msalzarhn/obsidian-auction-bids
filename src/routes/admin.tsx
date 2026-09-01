@@ -136,9 +136,22 @@ function AdminPage() {
             <ArrowLeft className="h-4 w-4" /> Volver al sitio
           </Link>
           <div className="font-display text-gradient-gold">Panel de administración</div>
-          <Button size="sm" onClick={addItem} className="bg-primary text-primary-foreground font-display tracking-wider">
-            <Plus className="h-4 w-4 mr-1" /> Nuevo
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={exportReport}
+              disabled={exporting}
+              className="border-gold/40 text-gold-soft hover:bg-gold/10 font-display tracking-wider"
+            >
+              {exporting ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <FileSpreadsheet className="h-4 w-4 mr-1" />}
+              Informe Excel
+            </Button>
+            <Button size="sm" onClick={addItem} className="bg-primary text-primary-foreground font-display tracking-wider">
+              <Plus className="h-4 w-4 mr-1" /> Nuevo
+            </Button>
+          </div>
+
         </div>
       </header>
 
