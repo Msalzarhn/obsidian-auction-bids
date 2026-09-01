@@ -388,6 +388,11 @@ function Landing() {
             © {new Date().getFullYear()} Capítulo Daga de Obsidiana · Organizado por la
             R:.L:.S:.M:. Igualdad No. 1 · Tegucigalpa, Honduras
           </p>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-4 text-xs text-muted-foreground">
+            <Link to="/privacidad" className="hover:text-gold-soft transition">Políticas de privacidad</Link>
+            <span className="hidden sm:inline text-gold/30">|</span>
+            <span>Todos los derechos reservados</span>
+          </div>
         </div>
       </footer>
 
