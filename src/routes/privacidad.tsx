@@ -155,7 +155,7 @@ function PrivacyPage() {
                     Los artículos que hayan sido ganados por hermanos que residan{" "}
                     <strong className="text-parchment">fuera de la República de Honduras</strong>{" "}
                     podrán ser enviados a su país de destino. El{" "}
-                    <strong className="text-parchment">QHS (Querer al Hermano Según)</strong>{" "}
+                    <strong className="text-parchment">Q:.H:.S:. (Querido Hermano Secretario)</strong>{" "}
                     se encargará de gestionar y coordinar el envío; sin embargo,{" "}
                     <strong className="text-parchment">
                       todos los costos de envío correrán por cuenta del acreedor o ganador del artículo
